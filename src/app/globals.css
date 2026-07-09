@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
+/* ============================================================
+   ООО «Маяк» — дизайн-система (PRD v3.0)
+   Светлый минимализм, бордовые акценты, инженерные линии.
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Бренд-палитра */
+  --burgundy: #421e2a;
+  --burgundy-600: #5a2a39;
+  --burgundy-800: #2e141c;
+  --carbon: #000c0f;
+  --bluegray: #9db3d3;
+  --warm: #e7dad4;
+  --warm-soft: #f3ece8;
+  --warm-bg: #f7f4f2;
+  --white: #ffffff;
+  --ink: #1a1216;
+  --ink-soft: #6b5b62;
+  --line: #ece5e1;
+
+  --background: var(--white);
+  --foreground: var(--ink);
+
+  --radius: 22px;
+  --radius-sm: 14px;
+  --radius-lg: 28px;
+  --shadow-card: 0 1px 2px rgba(66, 30, 42, 0.04), 0 12px 30px -16px rgba(66, 30, 42, 0.12);
+  --shadow-card-hover: 0 2px 6px rgba(66, 30, 42, 0.06), 0 24px 48px -20px rgba(66, 30, 42, 0.22);
+  --shadow-float: 0 30px 60px -24px rgba(0, 12, 15, 0.35);
 }
 
 @theme inline {
+  --color-burgundy: var(--burgundy);
+  --color-burgundy-600: var(--burgundy-600);
+  --color-burgundy-800: var(--burgundy-800);
+  --color-carbon: var(--carbon);
+  --color-bluegray: var(--bluegray);
+  --color-warm: var(--warm);
+  --color-warm-soft: var(--warm-soft);
+  --color-warm-bg: var(--warm-bg);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-brand: var(--radius);
+  --radius-brand-sm: var(--radius-sm);
+  --radius-brand-lg: var(--radius-lg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Мягкий тёплый фон для hero/визуалов (без сетки — чистый премиум-минимализм) */
+.engineering-grid {
+  background-color: var(--warm-bg);
+  background-image:
+    radial-gradient(110% 90% at 50% -10%, rgba(255, 255, 255, 0.9), transparent 62%),
+    radial-gradient(75% 60% at 88% 112%, rgba(231, 218, 212, 0.55), transparent 72%);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Микроанимации появления */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+::selection {
+  background: var(--burgundy);
+  color: var(--white);
 }
