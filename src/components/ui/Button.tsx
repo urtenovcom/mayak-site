@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
+import { forwardRef, type ComponentProps, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { ArrowRight } from "@/components/icons";
 
@@ -36,7 +36,7 @@ const baseClass =
 function inner(children: ReactNode, withArrow?: boolean) {
   return (
     <>
-      <span>{children}</span>
+      <span className="inline-flex items-center gap-1.5">{children}</span>
       {withArrow && (
         <ArrowRight className="h-[18px] w-[18px] transition-transform duration-200 group-hover:translate-x-1" />
       )}
@@ -44,23 +44,23 @@ function inner(children: ReactNode, withArrow?: boolean) {
   );
 }
 
-export function Button({
-  variant = "primary",
-  size = "md",
-  withArrow,
-  className,
-  children,
-  ...props
-}: BaseProps & Omit<ComponentProps<"button">, "className" | "children">) {
+export const Button = forwardRef<
+  HTMLButtonElement,
+  BaseProps & Omit<ComponentProps<"button">, "className" | "children">
+>(function Button(
+  { variant = "primary", size = "md", withArrow, className, children, ...props },
+  ref,
+) {
   return (
     <button
+      ref={ref}
       className={cn(baseClass, variants[variant], sizes[size], className)}
       {...props}
     >
       {inner(children, withArrow)}
     </button>
   );
-}
+});
 
 export function ButtonLink({
   variant = "primary",

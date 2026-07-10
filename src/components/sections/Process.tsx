@@ -1,5 +1,4 @@
 import { Container, SectionLabel } from "@/components/ui/Container";
-import { Home } from "@/components/icons";
 import { PROCESS } from "@/lib/site";
 
 export function Process() {
@@ -17,12 +16,9 @@ export function Process() {
               key={step.n}
               className="group relative rounded-[22px] border border-line bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgba(66,30,42,0.3)]"
             >
-              <div className="flex items-center justify-between">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-burgundy text-sm font-bold text-white">
-                  {step.n}
-                </span>
-                <Home className="h-5 w-5 text-burgundy/35" />
-              </div>
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-burgundy text-sm font-bold text-white">
+                {step.n}
+              </span>
               <h3 className="mt-5 whitespace-pre-line text-[18px] font-bold leading-tight text-ink">
                 {step.title}
               </h3>

@@ -14,10 +14,10 @@ export function Logo({
   return (
     <Link href="/" className={cn("inline-flex items-center", className)} aria-label="ООО «Маяк» — на главную">
       <Image
-        src={white ? "/logo-white.svg" : "/logo.svg"}
+        src={white ? "/logo-02-white.svg" : "/logo-02.svg"}
         alt="ООО «Маяк»"
         width={width}
-        height={Math.round((width / 150) * 60)}
+        height={Math.round((width * 186) / 520)}
         priority
         className="h-auto w-auto"
         style={{ width }}

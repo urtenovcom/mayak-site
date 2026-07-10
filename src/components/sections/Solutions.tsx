@@ -1,19 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Container, SectionLabel } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon, Check, ChevronLeft, ChevronRight } from "@/components/icons";
-import { SOLUTIONS } from "@/lib/site";
+import { SOLUTIONS, SOLUTION_PRODUCTS } from "@/lib/site";
 import { cn } from "@/lib/cn";
 
 export function Solutions() {
   const [active, setActive] = useState(0);
+  const [slide, setSlide] = useState(0);
   const current = SOLUTIONS[active];
+  const products = SOLUTION_PRODUCTS[current.id] ?? [];
+
+  // при смене направления — на первый пример
+  useEffect(() => setSlide(0), [active]);
+
+  const count = products.length;
+  const currentProduct = products[slide];
+  const go = (dir: number) => setSlide((s) => (s + dir + count) % count);
 
   return (
-    <section className="py-20 sm:py-24">
+    <section id="reshenia" className="scroll-mt-6 py-20 sm:py-24">
       <Container>
         <SectionLabel>Решения по задачам</SectionLabel>
         <h2 className="mt-4 text-[34px] font-extrabold tracking-[-0.02em] text-ink sm:text-[42px]">
@@ -83,41 +92,65 @@ export function Solutions() {
             </div>
 
             <div>
+              {/* большое фото текущего примера */}
               <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] border border-line bg-white">
-                <Image
-                  src="/renders/module-white-container.webp"
-                  alt="3D-рендер белого модульного блок-контейнера"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
-                />
+                {currentProduct && (
+                  <Image
+                    key={currentProduct.image}
+                    src={currentProduct.image}
+                    alt={currentProduct.name}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="animate-rise object-cover"
+                  />
+                )}
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-5 pb-4 pt-10">
+                  <span className="text-[16px] font-semibold text-white">
+                    {currentProduct?.name}
+                  </span>
+                </div>
               </div>
-              {/* мини-галерея примеров */}
+
+              {/* миниатюры + стрелки */}
               <div className="mt-5 flex items-center gap-3">
-                <span className="text-[13px] font-semibold text-ink-soft">
+                <span className="hidden text-[13px] font-semibold text-ink-soft sm:inline">
                   Примеры решений
                 </span>
                 <div className="flex items-center gap-2">
-                  {[0, 1, 2, 3].map((i) => (
-                    <span
-                      key={i}
-                      className="h-10 w-12 rounded-lg border border-line bg-warm"
-                    />
+                  {products.map((p, i) => (
+                    <button
+                      key={p.name}
+                      onClick={() => setSlide(i)}
+                      aria-label={p.name}
+                      className={cn(
+                        "relative h-12 w-12 overflow-hidden rounded-full border transition-all",
+                        i === slide
+                          ? "border-burgundy ring-2 ring-burgundy/25"
+                          : "border-line opacity-70 hover:opacity-100",
+                      )}
+                    >
+                      <Image
+                        src={p.image}
+                        alt=""
+                        fill
+                        sizes="56px"
+                        className="object-cover"
+                      />
+                    </button>
                   ))}
-                  <span className="flex h-10 items-center rounded-lg border border-line bg-white px-3 text-[13px] font-semibold text-burgundy">
-                    +8
-                  </span>
                 </div>
                 <div className="ml-auto flex gap-2">
                   <button
+                    onClick={() => go(-1)}
                     aria-label="Назад"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink-soft hover:bg-white"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink-soft transition-colors hover:bg-white hover:text-ink"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button
+                    onClick={() => go(1)}
                     aria-label="Вперёд"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink-soft hover:bg-white"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink-soft transition-colors hover:bg-white hover:text-ink"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>

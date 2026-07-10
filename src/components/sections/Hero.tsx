@@ -1,73 +1,157 @@
+"use client";
+
+/* ============================================================
+   Кинематографичный герой с фоновым видео.
+   Видео играет один раз (без loop), замирает на последнем кадре.
+   Примерно на середине (~3с) плавно всплывают заголовки и кнопка.
+   Навигация — общий глобальный Header (одинаковый на всех страницах).
+   ============================================================ */
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Container } from "@/components/ui/Container";
-import { ButtonLink } from "@/components/ui/Button";
-import { ContactRows } from "@/components/ContactCard";
-import { Diamond, Phone } from "@/components/icons";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/Button";
+import { SolutionModal } from "@/components/SolutionModal";
+
+const REVEAL_AT = 3; // секунда появления контента
+
+const SERVICES = ["Модульные здания", "Блок-контейнеры", "Металлоконструкции"];
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+};
+const item = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+};
 
 export function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [revealed, setRevealed] = useState(false);
+  // когда видео замерло на последнем кадре — включаем медленное «живое» движение
+  const [frozen, setFrozen] = useState(false);
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    // единый момент появления — контент героя и шапка проявляются вместе
+    const reveal = () => {
+      if (firedRef.current) return;
+      firedRef.current = true;
+      setRevealed(true);
+      const w = window as typeof window & { __heroRevealed?: boolean };
+      w.__heroRevealed = true;
+      window.dispatchEvent(new Event("hero-revealed"));
+    };
+    const onTime = () => {
+      if (v && v.currentTime >= REVEAL_AT) reveal();
+    };
+    const onEnded = () => setFrozen(true);
+    v?.addEventListener("timeupdate", onTime);
+    v?.addEventListener("ended", onEnded);
+    const fallback = setTimeout(reveal, REVEAL_AT * 1000 + 800);
+    // страховка: если событие ended не пришло — включаем движение по таймеру
+    const freezeFallback = setTimeout(() => setFrozen(true), 7000);
+    return () => {
+      v?.removeEventListener("timeupdate", onTime);
+      v?.removeEventListener("ended", onEnded);
+      clearTimeout(fallback);
+      clearTimeout(freezeFallback);
+    };
+  }, []);
+
   return (
-    <section className="relative overflow-hidden border-b border-line">
-      <div className="engineering-grid absolute inset-0" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-white/70" />
+    <section className="relative min-h-svh overflow-hidden bg-[#0d0b0c] text-white">
+      {/* Фон-видео */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 h-full w-full object-cover object-[center_92%]"
+        autoPlay
+        muted
+        playsInline
+        preload="auto"
+        poster="/video/hero-poster.webp"
+      >
+        <source src="/video/hero.webm" type="video/webm" />
+        <source src="/video/hero.mp4" type="video/mp4" />
+      </video>
 
-      <Container className="relative grid items-center gap-10 py-14 lg:grid-cols-[1.05fr_1.15fr] lg:gap-6 lg:py-20">
-        {/* левая колонка */}
-        <div className="animate-rise">
-          <span className="inline-flex items-center rounded-full border border-line bg-white/80 px-4 py-2 text-[13px] font-semibold tracking-tight text-ink/70 backdrop-blur">
+      {/* Стоп-кадр как изображение — плавно «оживает» без шиммера видео */}
+      {frozen && (
+        <Image
+          src="/video/hero-lastframe.webp"
+          alt=""
+          aria-hidden
+          fill
+          priority
+          sizes="100vw"
+          className="hero-kenburns object-cover object-[center_92%]"
+        />
+      )}
+
+      {/* Затемнения */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+      </div>
+
+      {/* ——— Контент ——— */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate={revealed ? "show" : "hidden"}
+        className="relative z-10 mx-auto flex min-h-svh max-w-[1360px] flex-col px-5 pt-24 sm:px-8 sm:pt-28"
+      >
+        {/* Услуги (сверху слева) */}
+        <motion.ul variants={item} className="space-y-1.5">
+          {SERVICES.map((s) => (
+            <li
+              key={s}
+              className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/70"
+            >
+              <span className="text-[#d29aa8]">/</span> {s}
+            </li>
+          ))}
+        </motion.ul>
+
+        <div className="flex-1" />
+
+        {/* Нижний блок */}
+        <div className="pb-16 sm:pb-20">
+          <motion.span
+            variants={item}
+            className="inline-flex items-center rounded-md border border-white/20 bg-white/5 px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm"
+          >
             Производство · Доставка · Монтаж
-          </span>
-
-          <h1 className="mt-6 text-balance text-[40px] font-extrabold leading-[1.06] tracking-[-0.02em] text-ink sm:text-[52px] lg:text-[58px]">
-            Модульные<br className="hidden sm:block" /> и металлические
-            конструкции{" "}
-            <span className="text-burgundy">под ваши задачи</span>
-          </h1>
-
-          <p className="mt-6 max-w-md text-[17px] leading-relaxed text-ink-soft">
+          </motion.span>
+          <motion.h1
+            variants={item}
+            className="mt-5 text-[38px] font-extrabold leading-[1.03] tracking-[-0.02em] sm:text-[58px] lg:text-[78px]"
+          >
+            Модульные и металлические
+            <br />
+            конструкции <span className="text-[#d29aa8]">под ваши задачи</span>
+          </motion.h1>
+          <motion.p
+            variants={item}
+            className="mt-5 max-w-md text-[16px] leading-relaxed text-white/70"
+          >
             Изготавливаем конструкции нужных размеров и комплектаций с учётом
             условий эксплуатации.
-          </p>
-
-          <div className="mt-9 flex flex-wrap items-center gap-5">
-            <ButtonLink href="/constructor" size="lg" withArrow>
-              Подобрать решение
-            </ButtonLink>
-            <span className="flex items-center gap-3 text-sm text-ink-soft">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white text-burgundy">
-                <Diamond className="h-[18px] w-[18px]" />
-              </span>
-              Индивидуальный подход
-              <br className="hidden sm:block" /> к каждому проекту
-            </span>
-          </div>
-        </div>
-
-        {/* правая колонка — рендер + панель контактов */}
-        <div className="relative animate-rise [animation-delay:120ms]">
-          <div className="overflow-hidden rounded-[28px] border border-line bg-white/40 shadow-[0_40px_80px_-40px_rgba(0,12,15,0.35)]">
-            <Image
-              src="/renders/hero-module-dark.webp"
-              alt="3D-визуализация остеклённого модульного здания на инженерной сетке"
-              width={1344}
-              height={768}
-              priority
-              sizes="(max-width: 1024px) 100vw, 55vw"
-              className="h-auto w-full"
+          </motion.p>
+          <motion.div variants={item} className="mt-7">
+            <SolutionModal
+              trigger={
+                <Button size="lg" variant="light" withArrow>
+                  Подобрать решение
+                </Button>
+              }
             />
-          </div>
-
-          {/* плавающая контактная карточка (как на эталоне) */}
-          <div className="absolute right-3 top-3 hidden w-[268px] flex-col gap-2 sm:flex">
-            <div className="flex items-center justify-center gap-2.5 rounded-2xl bg-burgundy px-5 py-3.5 font-semibold text-white shadow-[0_20px_40px_-18px_rgba(66,30,42,0.8)]">
-              <Phone className="h-[18px] w-[18px]" />
-              Получить расчёт
-            </div>
-            <div className="rounded-3xl border border-line bg-white p-2.5 shadow-[0_30px_60px_-28px_rgba(0,12,15,0.4)]">
-              <ContactRows />
-            </div>
-          </div>
+          </motion.div>
         </div>
-      </Container>
+      </motion.div>
     </section>
   );
 }

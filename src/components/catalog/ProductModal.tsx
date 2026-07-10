@@ -2,7 +2,6 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
-import { ButtonLink } from "@/components/ui/Button";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { Check, Close } from "@/components/icons";
 import type { Product } from "@/lib/catalog";
@@ -153,15 +152,6 @@ export function ProductModal({
                 </p>
               </div>
               <LeadForm source={`Заявка из каталога: ${product.name}`} compact />
-              <ButtonLink
-                href="/constructor"
-                variant="secondary"
-                size="lg"
-                withArrow
-                className="w-full"
-              >
-                Собрать в конструкторе
-              </ButtonLink>
             </div>
           </div>
         </Dialog.Content>

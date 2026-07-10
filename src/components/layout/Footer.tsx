@@ -1,23 +1,14 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { Container } from "@/components/ui/Container";
-import { Phone, Send, Message, Mail, MapPin } from "@/components/icons";
+import { Phone, Telegram, Max, Mail, MapPin } from "@/components/icons";
 import { SITE, CONTACTS, FOOTER_NAV } from "@/lib/site";
 
 const telHref = (s: string) => "tel:" + s.replace(/[^\d+]/g, "");
 
 export function Footer() {
   return (
-    <footer className="relative mt-24 overflow-hidden bg-carbon text-white/85">
-      {/* декоративная инженерная сетка */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
+    <footer className="relative overflow-hidden bg-carbon text-white/85">
       <Container className="relative">
         <div className="grid gap-12 py-16 lg:grid-cols-[1.4fr_1fr_1.3fr_1.3fr]">
           <div>
@@ -64,14 +55,6 @@ export function Footer() {
                   </a>
                 </li>
               ))}
-              <li className="flex items-center gap-2.5 text-white/70">
-                <Send className="h-4 w-4 text-bluegray" />
-                Telegram: {CONTACTS.telegram}
-              </li>
-              <li className="flex items-center gap-2.5 text-white/70">
-                <Message className="h-4 w-4 text-bluegray" />
-                MAX: {CONTACTS.max}
-              </li>
               <li>
                 <a
                   href={`mailto:${CONTACTS.email}`}
@@ -86,6 +69,30 @@ export function Footer() {
                 {CONTACTS.address}
               </li>
             </ul>
+
+            {/* Мессенджеры — иконками */}
+            <div className="mt-5 flex items-center gap-2.5">
+              <a
+                href="https://t.me/"
+                target="_blank"
+                rel="noopener"
+                aria-label={`Telegram: ${CONTACTS.telegram}`}
+                title={`Telegram: ${CONTACTS.telegram}`}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/75 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+              >
+                <Telegram className="h-[18px] w-[18px]" />
+              </a>
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener"
+                aria-label={`MAX: ${CONTACTS.max}`}
+                title={`MAX: ${CONTACTS.max}`}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/75 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+              >
+                <Max className="h-[18px] w-[18px]" />
+              </a>
+            </div>
           </div>
         </div>
 
@@ -93,7 +100,14 @@ export function Footer() {
           <span>
             © {SITE.legalName} {SITE.year}
           </span>
-          <span>Производство · Доставка · Монтаж</span>
+          <a
+            href="https://алазар.рф"
+            target="_blank"
+            rel="noopener"
+            className="transition-colors hover:text-white"
+          >
+            Разработано Alazar Studio
+          </a>
         </div>
       </Container>
     </footer>

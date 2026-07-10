@@ -143,6 +143,53 @@ export const SOLUTIONS = [
   },
 ] as const;
 
+// Товары-примеры по направлениям (для блока «Решения по задачам»)
+export type SolutionProduct = { name: string; image: string };
+
+const img = (n: string) => `/renders/products/${n}.webp`;
+
+export const SOLUTION_PRODUCTS: Record<string, SolutionProduct[]> = {
+  stroitelstvo: [
+    { name: "Строительная бытовка", image: img("bytovka-stroit") },
+    { name: "Блок-контейнер", image: img("blok-konteyner") },
+    { name: "Блок-контейнер из сэндвич-панелей", image: img("sendvich") },
+    { name: "Пост охраны", image: img("post-ohrany") },
+  ],
+  ofis: [
+    { name: "Офисный блок-контейнер", image: img("ofis") },
+    { name: "Административно-бытовой комплекс (АБК)", image: img("abk") },
+    { name: "Модульное здание", image: img("modulnoe-zdanie") },
+    { name: "Пост охраны", image: img("post-ohrany") },
+  ],
+  prozhivanie: [
+    { name: "Модульное общежитие", image: img("obshchezhitie") },
+    { name: "Административно-бытовой комплекс", image: img("abk") },
+    { name: "Утеплённая бытовка", image: img("bytovka-zima") },
+  ],
+  dacha: [
+    { name: "Хозблок", image: img("hozblok") },
+    { name: "Строительная бытовка", image: img("bytovka-stroit") },
+    { name: "Блок-контейнер из сэндвич-панелей", image: img("sendvich") },
+  ],
+  sanitarnye: [
+    { name: "Санитарный блок-контейнер", image: img("san") },
+    { name: "ФАП / медпункт", image: img("fap") },
+    { name: "Административно-бытовой корпус", image: img("abk") },
+  ],
+  angary: [
+    { name: "Ангар на металлокаркасе", image: img("angar") },
+    { name: "Блок-контейнер под склад", image: img("sklad") },
+    { name: "Металлический навес", image: img("naves") },
+    { name: "Блок-контейнер под оборудование", image: img("oborudovanie") },
+  ],
+  individualnye: [
+    { name: "Модульное здание", image: img("modulnoe-zdanie") },
+    { name: "Административно-бытовой комплекс", image: img("abk") },
+    { name: "ФАП / медпункт", image: img("fap") },
+    { name: "Блок-контейнер под оборудование", image: img("oborudovanie") },
+  ],
+};
+
 // Этапы «Как мы работаем»
 export const PROCESS = [
   {

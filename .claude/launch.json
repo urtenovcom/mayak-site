@@ -4,7 +4,7 @@
     {
       "name": "mayak-preview",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "-p", "3199"],
+      "runtimeArgs": ["run", "dev", "--", "--webpack", "-p", "3199"],
       "port": 3199,
       "autoPort": false
     }

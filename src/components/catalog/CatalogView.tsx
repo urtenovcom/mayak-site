@@ -6,7 +6,6 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ButtonLink } from "@/components/ui/Button";
 import { ProductCard } from "@/components/catalog/ProductCard";
 import { Close } from "@/components/icons";
-import { cn } from "@/lib/cn";
 import {
   PRODUCTS,
   PRODUCT_TYPES,
@@ -61,23 +60,24 @@ function FilterGroup<T extends string>({
       <h3 className="text-[13px] font-bold uppercase tracking-[0.12em] text-burgundy/70">
         {title}
       </h3>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-col items-start gap-2.5">
         {values.map((value) => {
           const active = selected.includes(value);
           return (
-            <button
+            <label
               key={value}
-              type="button"
-              onClick={() => onToggle(value)}
-              className={cn(
-                "rounded-full border px-3 py-1.5 text-[13px] font-medium transition-all duration-200",
-                active
-                  ? "border-burgundy/40 bg-burgundy text-white shadow-[0_8px_20px_-12px_rgba(66,30,42,0.7)]"
-                  : "border-line bg-white text-ink hover:border-burgundy/30 hover:bg-warm-soft",
-              )}
+              className="flex cursor-pointer select-none items-center gap-2.5 text-[14px] text-ink/85 transition-colors hover:text-ink"
             >
-              {value}
-            </button>
+              <input
+                type="checkbox"
+                checked={active}
+                onChange={() => onToggle(value)}
+                className="h-4 w-4 shrink-0 accent-[#421e2a]"
+              />
+              <span className={active ? "font-semibold text-ink" : ""}>
+                {value}
+              </span>
+            </label>
           );
         })}
       </div>
@@ -199,7 +199,7 @@ export function CatalogView() {
               </div>
 
               {filtered.length > 0 ? (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="flex flex-col gap-6">
                   {filtered.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
