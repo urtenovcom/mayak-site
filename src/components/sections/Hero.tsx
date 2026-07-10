@@ -9,7 +9,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { SolutionModal } from "@/components/SolutionModal";
 
@@ -17,11 +17,11 @@ const REVEAL_AT = 3; // секунда появления контента
 
 const SERVICES = ["Модульные здания", "Блок-контейнеры", "Металлоконструкции"];
 
-const container = {
+const container: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
 };
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 };
