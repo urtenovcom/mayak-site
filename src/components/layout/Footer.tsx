@@ -3,6 +3,7 @@ import { Logo } from "@/components/Logo";
 import { Container } from "@/components/ui/Container";
 import { Phone, Telegram, Max, Mail, MapPin } from "@/components/icons";
 import { SITE, CONTACTS, FOOTER_NAV } from "@/lib/site";
+import { typo } from "@/lib/typo";
 
 const telHref = (s: string) => "tel:" + s.replace(/[^\d+]/g, "");
 
@@ -13,9 +14,10 @@ export function Footer() {
         <div className="grid gap-12 py-16 lg:grid-cols-[1.4fr_1fr_1.3fr_1.3fr]">
           <div>
             <Logo white width={170} />
-            <p className="mt-6 max-w-xs text-sm leading-relaxed text-white/55">
-              Производим модульные и металлические конструкции любого назначения.
-              Работаем по всей России.
+            <p className="mt-6 max-w-xs text-pretty text-sm leading-relaxed text-white/55">
+              {typo(
+                "Производим модульные и металлические конструкции любого назначения. Работаем по всей России.",
+              )}
             </p>
           </div>
 
@@ -31,7 +33,7 @@ export function Footer() {
                       href={l.href}
                       className="whitespace-pre-line text-sm text-white/55 transition-colors hover:text-white"
                     >
-                      {l.label}
+                      {typo(l.label)}
                     </Link>
                   </li>
                 ))}

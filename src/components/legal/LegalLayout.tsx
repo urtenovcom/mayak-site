@@ -26,7 +26,7 @@ export function LegalLayout({
       <PageHeader label={label} title={title} description={description} />
       <section className="py-14 sm:py-20">
         <Container>
-          <div className="max-w-3xl text-[16px]">{children}</div>
+          <div className="max-w-3xl text-pretty text-[16px]">{children}</div>
         </Container>
       </section>
     </>

@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { Icon, type IconName } from "@/components/icons";
 import { STATS } from "@/lib/site";
+import { typo } from "@/lib/typo";
 
 export function Stats() {
   return (
@@ -20,7 +21,7 @@ export function Stats() {
                   {s.value}
                 </div>
                 <div className="mt-1.5 whitespace-pre-line text-[13px] leading-tight text-ink-soft">
-                  {s.label}
+                  {typo(s.label)}
                 </div>
               </div>
             </div>

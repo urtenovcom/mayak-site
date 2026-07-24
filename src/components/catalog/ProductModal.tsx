@@ -5,6 +5,7 @@ import Image from "next/image";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { Check, Close } from "@/components/icons";
 import type { Product } from "@/lib/catalog";
+import { typo } from "@/lib/typo";
 
 function Param({ label, value }: { label: string; value: string }) {
   return (
@@ -36,11 +37,11 @@ export function ProductModal({
           {/* Шапка */}
           <div className="flex items-start justify-between gap-4 border-b border-line bg-white/70 px-5 py-4 sm:px-8 sm:py-5">
             <div>
-              <Dialog.Title className="text-[20px] font-extrabold tracking-[-0.02em] text-ink sm:text-[24px]">
-                {product.name}
+              <Dialog.Title className="text-balance text-[20px] font-extrabold tracking-[-0.02em] text-ink sm:text-[24px]">
+                {typo(product.name)}
               </Dialog.Title>
-              <Dialog.Description className="mt-1 text-[14px] text-ink-soft">
-                {product.purpose}
+              <Dialog.Description className="mt-1 text-pretty text-[14px] text-ink-soft">
+                {typo(product.purpose)}
               </Dialog.Description>
             </div>
             <Dialog.Close
@@ -82,8 +83,8 @@ export function ProductModal({
                 <h3 className="text-[13px] font-bold uppercase tracking-[0.12em] text-burgundy/70">
                   Описание
                 </h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-                  {product.description}
+                <p className="mt-3 text-pretty text-[15px] leading-relaxed text-ink-soft">
+                  {typo(product.description)}
                 </p>
               </div>
 
@@ -94,7 +95,7 @@ export function ProductModal({
                 </h3>
                 <div className="mt-3 grid grid-cols-2 gap-2.5">
                   <Param label="Габариты" value={product.size} />
-                  <Param label="Эксплуатация" value={product.exploitation} />
+                  <Param label="Параметры" value={product.exploitation} />
                   <Param label="Тип" value={product.type} />
                   <Param
                     label="Назначение"
@@ -134,7 +135,7 @@ export function ProductModal({
                       <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-burgundy/10 text-burgundy">
                         <Check className="h-3.5 w-3.5" />
                       </span>
-                      {item}
+                      {typo(item)}
                     </li>
                   ))}
                 </ul>
@@ -147,8 +148,10 @@ export function ProductModal({
                 <h3 className="text-[17px] font-extrabold tracking-[-0.02em] text-ink">
                   Оставьте заявку
                 </h3>
-                <p className="mt-1 text-[14px] text-ink-soft">
-                  Рассчитаем стоимость «{product.name}» под вашу комплектацию.
+                <p className="mt-1 text-pretty text-[14px] text-ink-soft">
+                  {typo(
+                    `Рассчитаем стоимость «${product.name}» под вашу комплектацию.`,
+                  )}
                 </p>
               </div>
               <LeadForm source={`Заявка из каталога: ${product.name}`} compact />

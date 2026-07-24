@@ -1,14 +1,20 @@
 import { Container, SectionLabel } from "@/components/ui/Container";
 import { PROCESS } from "@/lib/site";
+import { typo } from "@/lib/typo";
 
 export function Process() {
   return (
     <section className="border-y border-line bg-warm-soft/40 py-20 sm:py-24">
       <Container>
-        <SectionLabel>От задачи — до результата</SectionLabel>
-        <h2 className="mt-4 text-[34px] font-extrabold tracking-[-0.02em] text-ink sm:text-[42px]">
-          Как мы работаем
+        <SectionLabel>Как мы работаем</SectionLabel>
+        <h2 className="mt-4 text-balance text-[34px] font-extrabold tracking-[-0.02em] text-ink sm:text-[42px]">
+          {typo("От задачи — до результата")}
         </h2>
+        <p className="mt-4 max-w-2xl text-pretty text-[16px] leading-relaxed text-ink-soft">
+          {typo(
+            "Мы подбираем конструкцию под задачу, размеры, комплектацию и условия эксплуатации. После уточнения требований запускаем изготовление, организуем доставку и при необходимости выполняем монтаж на объекте.",
+          )}
+        </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {PROCESS.map((step) => (
@@ -19,12 +25,9 @@ export function Process() {
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-burgundy text-sm font-bold text-white">
                 {step.n}
               </span>
-              <h3 className="mt-5 whitespace-pre-line text-[18px] font-bold leading-tight text-ink">
-                {step.title}
+              <h3 className="mt-5 whitespace-pre-line text-balance text-[18px] font-bold leading-tight text-ink">
+                {typo(step.title)}
               </h3>
-              <p className="mt-2.5 text-[14px] leading-relaxed text-ink-soft">
-                {step.text}
-              </p>
             </div>
           ))}
         </div>

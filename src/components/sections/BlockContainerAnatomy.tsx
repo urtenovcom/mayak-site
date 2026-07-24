@@ -12,13 +12,14 @@ import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/cn";
+import { typo } from "@/lib/typo";
 
 type Hotspot = { x: number; y: number; title: string; desc: string };
 
 const OUTSIDE: Hotspot[] = [
-  { x: 0.5, y: 0.25, title: "Кровля, которая не течёт", desc: "Односкатная кровля с уклоном и герметичными стыками — вода уходит, протечек нет даже в снегопад." },
-  { x: 0.85, y: 0.42, title: "Экономичные окна", desc: "Энергосберегающие окна ПВХ со стеклопакетом — сохраняют тепло и снижают затраты на обогрев." },
-  { x: 0.6, y: 0.55, title: "Защита от коррозии", desc: "Наружная обшивка профлистом по ГОСТ с полимерным покрытием — не ржавеет годами." },
+  { x: 0.5, y: 0.25, title: "Оцинкованная кровля", desc: "Односкатная кровля с уклоном и герметичными стыками — вода уходит, протечек нет даже в снегопад." },
+  { x: 0.85, y: 0.42, title: "Окна под комплектацию", desc: "Энергосберегающие окна ПВХ со стеклопакетом — сохраняют тепло и снижают затраты на обогрев." },
+  { x: 0.6, y: 0.55, title: "Защита обшивки", desc: "Наружная обшивка профлистом по ГОСТ с полимерным покрытием — не ржавеет годами." },
   { x: 0.34, y: 0.52, title: "Износостойкие двери", desc: "Утеплённые металлические двери с надёжным замком, при необходимости — противопожарные." },
   { x: 0.3, y: 0.74, title: "Прочный каркас", desc: "Цельносварной каркас из гнутого профиля — выдерживает перевозку, штабелирование и установку в два этажа." },
 ];
@@ -67,7 +68,7 @@ function Pin({
             "flex items-center gap-1.5 whitespace-nowrap rounded-full py-1.5 pl-1.5 pr-3.5 text-[13px] font-semibold shadow-[0_8px_24px_-8px_rgba(0,0,0,0.6)] backdrop-blur-md transition-colors duration-200",
             active
               ? "bg-burgundy text-white ring-2 ring-burgundy/40"
-              : "border border-white/15 bg-white/12 text-white hover:bg-white/20",
+              : "border border-burgundy/20 bg-white/90 text-burgundy hover:bg-white",
           )}
         >
           <span
@@ -78,7 +79,7 @@ function Pin({
           >
             +
           </span>
-          {spot.title}
+          {typo(spot.title)}
         </button>
 
         <AnimatePresence>
@@ -94,8 +95,8 @@ function Pin({
                 below ? "top-full mt-2.5" : "bottom-full mb-2.5",
               )}
             >
-              <p className="text-[14px] font-bold text-white">{spot.title}</p>
-              <p className="mt-1 text-[13px] leading-snug text-white/70">{spot.desc}</p>
+              <p className="text-[14px] font-bold text-white">{typo(spot.title)}</p>
+              <p className="mt-1 text-pretty text-[13px] leading-snug text-white/70">{typo(spot.desc)}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -136,14 +137,13 @@ export function BlockContainerAnatomy() {
         {/* Заголовок */}
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-[13px] font-bold uppercase tracking-[0.18em] text-[#d29aa8]">
-            Качество по ТУ
+            Конструкция в деталях
           </span>
-          <h2 className="mt-4 text-[34px] font-extrabold tracking-[-0.02em] text-white sm:text-[44px]">
-            Блок-контейнеры, которые служат дольше
+          <h2 className="mt-4 text-balance text-[34px] font-extrabold tracking-[-0.02em] text-white sm:text-[44px]">
+            {typo("Блок-контейнер изнутри и снаружи")}
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-white/60">
-            Загляните внутрь и снаружи — покажем, из чего собран наш
-            блок-контейнер и почему он надёжнее.
+          <p className="mt-4 text-pretty text-[16px] leading-relaxed text-white/60">
+            {typo("Основные элементы конструкции")}
           </p>
         </div>
 
@@ -257,7 +257,7 @@ export function BlockContainerAnatomy() {
                           isActive ? "text-white/70" : "text-white/40",
                         )}
                       >
-                        {t.sub}
+                        {typo(t.sub)}
                       </span>
                     </span>
                   </button>

@@ -219,7 +219,6 @@ export function BytovkaConfigurator() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [comment, setComment] = useState("");
-  const [consent, setConsent] = useState(false);
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -264,11 +263,11 @@ export function BytovkaConfigurator() {
       case 8:
         return true;
       case 9:
-        return nameValid && phoneValid && consent;
+        return nameValid && phoneValid;
       default:
         return false;
     }
-  }, [step, cfg, nameValid, phoneValid, consent]);
+  }, [step, cfg, nameValid, phoneValid]);
 
   const isLast = step === total - 1;
 
@@ -702,26 +701,16 @@ export function BytovkaConfigurator() {
                     onChange={(e) => setComment(e.target.value)}
                   />
                 </div>
-                <label className="flex items-start gap-3 text-[13px] leading-snug text-ink-soft">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5 h-4 w-4 accent-[#421e2a]"
-                    checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
-                  />
-                  <span>
-                    Соглашаюсь с{" "}
-                    <Link href="/privacy-policy" className="text-burgundy underline">
-                      политикой конфиденциальности
-                    </Link>{" "}
-                    и обработкой персональных данных.
-                  </span>
-                </label>
-                {touched && !consent && (
-                  <p className="-mt-2 text-[13px] text-burgundy">
-                    Необходимо согласие на обработку данных
-                  </p>
-                )}
+                <p className="text-[12px] leading-snug text-ink-soft/70">
+                  Нажимая кнопку, вы соглашаетесь с{" "}
+                  <Link
+                    href="/personal-data-consent"
+                    className="underline underline-offset-2 hover:text-ink"
+                  >
+                    обработкой персональных данных
+                  </Link>
+                  .
+                </p>
               </div>
             </StepShell>
           )}

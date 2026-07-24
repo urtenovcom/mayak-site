@@ -35,21 +35,19 @@ export function CallbackModal({ trigger }: { trigger: ReactNode }) {
   const [phone, setPhone] = useState("");
   const [when, setWhen] = useState<"Сейчас" | "По времени">("Сейчас");
   const [time, setTime] = useState("");
-  const [consent, setConsent] = useState(false);
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
   const nameValid = name.trim().length >= 2;
   const phoneValid = PHONE_RE.test(phone);
-  const canSubmit = nameValid && phoneValid && consent;
+  const canSubmit = nameValid && phoneValid;
 
   function reset() {
     setName("");
     setPhone("");
     setWhen("Сейчас");
     setTime("");
-    setConsent(false);
     setTouched(false);
     setDone(false);
   }
@@ -212,25 +210,16 @@ export function CallbackModal({ trigger }: { trigger: ReactNode }) {
                     {submitting ? "Отправляем…" : "Заказать звонок"}
                   </Button>
 
-                  <label className="mt-4 flex items-start gap-2.5 text-[12.5px] leading-snug text-ink-soft">
-                    <input
-                      type="checkbox"
-                      className="mt-0.5 h-4 w-4 accent-[#421e2a]"
-                      checked={consent}
-                      onChange={(e) => setConsent(e.target.checked)}
-                    />
-                    <span>
-                      Я ознакомлен(а) с{" "}
-                      <Link href="/privacy-policy" className="text-burgundy underline">
-                        политикой конфиденциальности
-                      </Link>
-                    </span>
-                  </label>
-                  {touched && !consent && (
-                    <p className="mt-1 text-[13px] text-burgundy">
-                      Необходимо согласие на обработку данных
-                    </p>
-                  )}
+                  <p className="mt-4 text-[12px] leading-snug text-ink-soft/70">
+                    Нажимая кнопку, вы соглашаетесь с{" "}
+                    <Link
+                      href="/personal-data-consent"
+                      className="underline underline-offset-2 hover:text-ink"
+                    >
+                      обработкой персональных данных
+                    </Link>
+                    .
+                  </p>
                 </div>
               </div>
             )}

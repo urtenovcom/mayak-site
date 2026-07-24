@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/legal/LegalLayout";
+import {
+  CertificateCard,
+  SERTIFIKAT_SOOTVETSTVIYA,
+} from "@/components/CertificateCard";
 
-// Шаблон, требует проверки юристом.
+// Шаблон, требует проверки юристом. Реальный документ — сертификат соответствия.
 
 export const metadata: Metadata = {
   title: "Сертификаты",
@@ -9,8 +13,8 @@ export const metadata: Metadata = {
     "Продукция ООО «Маяк» соответствует требованиям нормативной документации. Сертификаты и документы о соответствии.",
 };
 
+// Плейсхолдеры для документов, которые будут добавлены позже.
 const CERTIFICATES = [
-  { title: "Сертификат соответствия", note: "Модульные здания" },
   { title: "Декларация о соответствии", note: "Металлоконструкции" },
   { title: "Паспорт качества", note: "Несущий каркас" },
   { title: "Сертификат на материалы", note: "Сэндвич-панели" },
@@ -37,6 +41,7 @@ export default function SertifikatyPage() {
       </p>
 
       <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <CertificateCard {...SERTIFIKAT_SOOTVETSTVIYA} />
         {CERTIFICATES.map((cert) => (
           <div
             key={cert.title}

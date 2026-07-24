@@ -10,9 +10,9 @@
    ============================================================ */
 
 import { useEffect, useRef, useState } from "react";
-import { CONTACTS } from "@/lib/site";
+import { typo } from "@/lib/typo";
 
-// Точка производства (деревня Рыбаки, Раменский р-н, МО)
+// Точка производства (деревня Рыбаки, Раменский г.о., МО)
 const POINT: [number, number] = [55.6, 38.1];
 const RADIUS_KM = 300;
 const KEY =
@@ -180,10 +180,15 @@ export function ProductionMap() {
           <h2 className="mt-2 text-[22px] font-extrabold tracking-[-0.02em] text-white sm:text-[28px]">
             Собственное производство
           </h2>
-          <p className="mt-2 text-[14px] leading-relaxed text-white/60">
-            {CONTACTS.address}. Отгружаем и монтируем по всей России, а в радиусе{" "}
-            <span className="font-semibold text-white">300&nbsp;км</span> —
-            доставка и установка в кратчайшие сроки.
+          <p className="mt-2 text-pretty text-[14px] leading-relaxed text-white/60">
+            {typo(
+              "Производственная площадка находится в Раменском городском округе, деревня Рыбаки.",
+            )}
+          </p>
+          <p className="mt-2 text-pretty text-[14px] leading-relaxed text-white/60">
+            {typo(
+              "Основная зона доставки и монтажа — до 300 км от производства. Более дальние направления обсуждаются индивидуально.",
+            )}
           </p>
         </div>
       </div>

@@ -19,6 +19,7 @@ import {
   Sparkle,
 } from "@/components/icons";
 import type { Product } from "@/lib/catalog";
+import { typo } from "@/lib/typo";
 
 type Ico = ComponentType<{ className?: string }>;
 
@@ -84,14 +85,14 @@ export function ProductCard({ product }: { product: Product }) {
             {product.type}
           </span>
 
-          <h3 className="text-[18px] font-extrabold leading-tight tracking-[-0.02em] text-ink">
-            {product.name}
+          <h3 className="text-balance text-[18px] font-extrabold leading-tight tracking-[-0.02em] text-ink">
+            {typo(product.name)}
           </h3>
-          <p className="text-[14px] leading-snug text-ink-soft">{product.purpose}</p>
+          <p className="text-pretty text-[14px] leading-snug text-ink-soft">{typo(product.purpose)}</p>
 
           {/* Сезонность + сценарии — иконками с подсказкой */}
           <div className="mt-1 flex flex-wrap items-center gap-1.5">
-            <InfoIcon label={`Эксплуатация: ${product.exploitation}`} Icon={Season} />
+            <InfoIcon label={`Параметры: ${product.exploitation}`} Icon={Season} />
             <span className="mx-0.5 h-5 w-px bg-line" />
             {product.tags.map((tag) => (
               <InfoIcon key={tag} label={tag} Icon={TAG_ICON[tag] ?? Sparkle} />

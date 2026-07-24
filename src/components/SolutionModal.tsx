@@ -36,18 +36,16 @@ export function SolutionModal({ trigger }: { trigger: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [channel, setChannel] = useState<string>("Звонок");
   const [phone, setPhone] = useState("");
-  const [consent, setConsent] = useState(false);
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
   const phoneValid = PHONE_RE.test(phone);
-  const canSubmit = phoneValid && consent;
+  const canSubmit = phoneValid;
 
   function reset() {
     setChannel("Звонок");
     setPhone("");
-    setConsent(false);
     setTouched(false);
     setDone(false);
   }
@@ -184,25 +182,16 @@ export function SolutionModal({ trigger }: { trigger: ReactNode }) {
                   {submitting ? "Отправляем…" : "Подобрать решение"}
                 </Button>
 
-                <label className="mt-4 flex items-start gap-2.5 text-[12.5px] leading-snug text-ink-soft">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5 h-4 w-4 accent-[#421e2a]"
-                    checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
-                  />
-                  <span>
-                    Я ознакомлен(а) с{" "}
-                    <Link href="/privacy-policy" className="text-burgundy underline">
-                      политикой конфиденциальности
-                    </Link>
-                  </span>
-                </label>
-                {touched && !consent && (
-                  <p className="mt-1 text-[13px] text-burgundy">
-                    Необходимо согласие на обработку данных
-                  </p>
-                )}
+                <p className="mt-4 text-[12px] leading-snug text-ink-soft/70">
+                  Нажимая кнопку, вы соглашаетесь с{" "}
+                  <Link
+                    href="/personal-data-consent"
+                    className="underline underline-offset-2 hover:text-ink"
+                  >
+                    обработкой персональных данных
+                  </Link>
+                  .
+                </p>
               </div>
             </div>
           )}

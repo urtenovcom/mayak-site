@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Container, SectionLabel } from "@/components/ui/Container";
+import { typo } from "@/lib/typo";
 
 export function PageHeader({
   label,
@@ -19,11 +20,11 @@ export function PageHeader({
       <Container className="relative py-16 sm:py-20">
         <SectionLabel>{label}</SectionLabel>
         <h1 className="mt-4 max-w-3xl text-balance text-[36px] font-extrabold leading-[1.08] tracking-[-0.02em] text-ink sm:text-[48px]">
-          {title}
+          {typo(title)}
         </h1>
         {description && (
-          <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-ink-soft">
-            {description}
+          <p className="mt-5 max-w-xl text-pretty text-[17px] leading-relaxed text-ink-soft">
+            {typo(description)}
           </p>
         )}
         {children && <div className="mt-8">{children}</div>}

@@ -5,10 +5,11 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ButtonLink } from "@/components/ui/Button";
 import { ProductCard } from "@/components/catalog/ProductCard";
-import { Close } from "@/components/icons";
+import { Close, ChevronRight } from "@/components/icons";
 import {
   PRODUCTS,
   PRODUCT_TYPES,
+  PRODUCT_TYPE_LABELS,
   EXPLOITATIONS,
   PRODUCT_OPTIONS,
   PURPOSE_TAGS,
@@ -17,15 +18,23 @@ import {
   type Exploitation,
   type ProductOption,
 } from "@/lib/catalog";
+import { typo } from "@/lib/typo";
 
 type Filters = {
   purpose: string[];
   type: ProductType[];
   exploitation: Exploitation[];
   options: ProductOption[];
+  individual: boolean;
 };
 
-const EMPTY: Filters = { purpose: [], type: [], exploitation: [], options: [] };
+const EMPTY: Filters = {
+  purpose: [],
+  type: [],
+  exploitation: [],
+  options: [],
+  individual: false,
+};
 
 function toggle<T>(list: T[], value: T): T[] {
   return list.includes(value)
@@ -41,7 +50,30 @@ function matches(product: Product, f: Filters): boolean {
     return false;
   if (f.options.length && !f.options.every((o) => product.options.includes(o)))
     return false;
+  if (f.individual && !product.individual) return false;
   return true;
+}
+
+function CheckRow({
+  label,
+  checked,
+  onToggle,
+}: {
+  label: string;
+  checked: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <label className="flex cursor-pointer select-none items-center gap-2.5 text-[14px] text-ink/85 transition-colors hover:text-ink">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onToggle}
+        className="h-4 w-4 shrink-0 accent-[#421e2a]"
+      />
+      <span className={checked ? "font-semibold text-ink" : ""}>{label}</span>
+    </label>
+  );
 }
 
 function FilterGroup<T extends string>({
@@ -49,39 +81,53 @@ function FilterGroup<T extends string>({
   values,
   selected,
   onToggle,
+  labels,
+  extra,
+  defaultOpen,
 }: {
   title: string;
   values: readonly T[];
   selected: T[];
   onToggle: (value: T) => void;
+  labels?: Partial<Record<T, string>>;
+  extra?: { label: string; checked: boolean; onToggle: () => void };
+  defaultOpen?: boolean;
 }) {
+  const count = selected.length + (extra?.checked ? 1 : 0);
   return (
-    <div>
-      <h3 className="text-[13px] font-bold uppercase tracking-[0.12em] text-burgundy/70">
-        {title}
-      </h3>
+    <details
+      open={defaultOpen}
+      className="group border-b border-line py-3 last:border-0"
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 [&::-webkit-details-marker]:hidden">
+        <span className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.12em] text-burgundy/70">
+          {title}
+          {count > 0 && (
+            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-burgundy px-1.5 text-[11px] font-bold text-white">
+              {count}
+            </span>
+          )}
+        </span>
+        <ChevronRight className="h-4 w-4 shrink-0 text-ink-soft transition-transform duration-200 group-open:rotate-90" />
+      </summary>
       <div className="mt-3 flex flex-col items-start gap-2.5">
-        {values.map((value) => {
-          const active = selected.includes(value);
-          return (
-            <label
-              key={value}
-              className="flex cursor-pointer select-none items-center gap-2.5 text-[14px] text-ink/85 transition-colors hover:text-ink"
-            >
-              <input
-                type="checkbox"
-                checked={active}
-                onChange={() => onToggle(value)}
-                className="h-4 w-4 shrink-0 accent-[#421e2a]"
-              />
-              <span className={active ? "font-semibold text-ink" : ""}>
-                {value}
-              </span>
-            </label>
-          );
-        })}
+        {values.map((value) => (
+          <CheckRow
+            key={value}
+            label={labels?.[value] ?? value}
+            checked={selected.includes(value)}
+            onToggle={() => onToggle(value)}
+          />
+        ))}
+        {extra && (
+          <CheckRow
+            label={extra.label}
+            checked={extra.checked}
+            onToggle={extra.onToggle}
+          />
+        )}
       </div>
-    </div>
+    </details>
   );
 }
 
@@ -98,9 +144,10 @@ export function CatalogView() {
     filters.purpose.length +
     filters.type.length +
     filters.exploitation.length +
-    filters.options.length;
+    filters.options.length +
+    (filters.individual ? 1 : 0);
 
-  const update = <K extends keyof Filters>(
+  const update = <K extends "purpose" | "type" | "exploitation" | "options">(
     key: K,
     value: Filters[K][number],
   ) =>
@@ -110,21 +157,29 @@ export function CatalogView() {
     }));
 
   const filtersPanel = (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col">
       <FilterGroup
         title="Назначение"
         values={PURPOSE_TAGS}
         selected={filters.purpose}
         onToggle={(v) => update("purpose", v)}
+        defaultOpen
       />
       <FilterGroup
-        title="Тип конструкции"
+        title="Разделы каталога"
         values={PRODUCT_TYPES}
         selected={filters.type}
         onToggle={(v) => update("type", v)}
+        labels={PRODUCT_TYPE_LABELS}
+        extra={{
+          label: "Индивидуальные решения",
+          checked: filters.individual,
+          onToggle: () =>
+            setFilters((p) => ({ ...p, individual: !p.individual })),
+        }}
       />
       <FilterGroup
-        title="Эксплуатация"
+        title="Параметры"
         values={EXPLOITATIONS}
         selected={filters.exploitation}
         onToggle={(v) => update("exploitation", v)}
@@ -139,7 +194,7 @@ export function CatalogView() {
         <button
           type="button"
           onClick={() => setFilters(EMPTY)}
-          className="inline-flex items-center gap-1.5 self-start text-[13px] font-semibold text-burgundy hover:underline"
+          className="mt-4 inline-flex items-center gap-1.5 self-start text-[13px] font-semibold text-burgundy hover:underline"
         >
           <Close className="h-4 w-4" />
           Сбросить фильтры ({activeCount})
@@ -152,7 +207,7 @@ export function CatalogView() {
     <>
       <PageHeader
         label="Каталог"
-        title="Решения под любую задачу"
+        title="Типовые и индивидуальные модульные решения"
         description="Бытовки, блок-контейнеры, модульные здания, санитарные модули и металлоконструкции. Выберите готовое решение или соберите своё под условия эксплуатации."
       />
 
@@ -161,7 +216,7 @@ export function CatalogView() {
           <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
             {/* Фильтры — десктоп */}
             <aside className="hidden lg:block">
-              <div className="sticky top-24 rounded-[22px] border border-line bg-white/70 p-6">
+              <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-[22px] border border-line bg-white/70 p-6">
                 {filtersPanel}
               </div>
             </aside>
@@ -206,14 +261,13 @@ export function CatalogView() {
                 </div>
               ) : (
                 <div className="flex flex-col items-start gap-5 rounded-[28px] border border-line bg-white p-8 sm:p-12">
-                  <h3 className="text-[22px] font-extrabold tracking-[-0.02em] text-ink">
-                    Под такие фильтры готового решения нет
+                  <h3 className="text-balance text-[22px] font-extrabold tracking-[-0.02em] text-ink">
+                    {typo("Под такие фильтры готового решения нет")}
                   </h3>
-                  <p className="max-w-md text-[15px] leading-relaxed text-ink-soft">
-                    Это не значит, что мы не сможем помочь. Мы проектируем и
-                    изготавливаем конструкции под индивидуальные требования —
-                    габариты, комплектацию и условия эксплуатации. Соберите своё
-                    решение в конструкторе или сбросьте часть фильтров.
+                  <p className="max-w-md text-pretty text-[15px] leading-relaxed text-ink-soft">
+                    {typo(
+                      "Это не значит, что мы не сможем помочь. Мы проектируем и изготавливаем конструкции под индивидуальные требования — габариты, комплектацию и условия эксплуатации. Соберите своё решение в конструкторе или сбросьте часть фильтров.",
+                    )}
                   </p>
                   <div className="flex flex-wrap gap-3">
                     <ButtonLink href="/constructor" variant="primary" size="lg" withArrow>

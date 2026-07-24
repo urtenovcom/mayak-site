@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { CallbackModal } from "@/components/CallbackModal";
+import { typo } from "@/lib/typo";
 
 export function BigCTA() {
   return (
@@ -23,15 +24,17 @@ export function BigCTA() {
 
           <div className="relative max-w-xl">
             <span className="text-[14px] font-semibold text-warm/80">
-              Не нашли подходящее решение?
+              {typo("Не нашли подходящее решение?")}
             </span>
-            <h2 className="mt-4 text-[32px] font-extrabold leading-tight tracking-[-0.02em] sm:text-[44px]">
-              Создадим конструкцию
+            <h2 className="mt-4 text-balance text-[32px] font-extrabold leading-tight tracking-[-0.02em] sm:text-[44px]">
+              Изготовим конструкцию
               <br />
-              под вашу задачу
+              под&nbsp;ваши требования
             </h2>
-            <p className="mt-4 max-w-md text-[16px] leading-relaxed text-white/70">
-              Разработаем индивидуальное решение под ваши требования.
+            <p className="mt-4 max-w-md text-pretty text-[16px] leading-relaxed text-white/70">
+              {typo(
+                "Оставьте заявку — подберём формат, размеры и комплектацию под задачу.",
+              )}
             </p>
             <div className="mt-8">
               <CallbackModal

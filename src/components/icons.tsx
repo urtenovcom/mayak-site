@@ -50,6 +50,13 @@ export const Menu = (p: IconProps) => (
   </svg>
 );
 
+export const Copy = (p: IconProps) => (
+  <svg {...base(p)}>
+    <rect x="9" y="9" width="11" height="11" rx="2" />
+    <path d="M5 15V5a2 2 0 012-2h8" />
+  </svg>
+);
+
 export const Phone = (p: IconProps) => (
   <svg {...base(p)}>
     <path d="M5 4h3l1.5 4-2 1.5a12 12 0 005 5l1.5-2 4 1.5V20a1 1 0 01-1 1A16 16 0 014 6a1 1 0 011-2z" />

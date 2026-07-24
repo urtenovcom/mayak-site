@@ -3,6 +3,7 @@ import { Container, SectionLabel } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ButtonLink } from "@/components/ui/Button";
 import { ChevronRight } from "@/components/icons";
+import { typo } from "@/lib/typo";
 
 export const metadata: Metadata = {
   title: "Вопросы и ответы — ООО «Маяк»",
@@ -63,14 +64,14 @@ export default function FaqPage() {
                   key={item.q}
                   className="group rounded-[22px] border border-line bg-white px-6 py-1 shadow-[0_14px_40px_-30px_rgba(0,12,15,0.4)] open:bg-warm-soft/40"
                 >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-[17px] font-bold tracking-[-0.01em] text-ink [&::-webkit-details-marker]:hidden">
-                    {item.q}
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-balance text-[17px] font-bold tracking-[-0.01em] text-ink [&::-webkit-details-marker]:hidden">
+                    {typo(item.q)}
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-warm-soft text-burgundy transition-transform duration-200 group-open:rotate-90">
                       <ChevronRight className="h-4 w-4" />
                     </span>
                   </summary>
-                  <p className="pb-5 text-[15px] leading-relaxed text-ink-soft">
-                    {item.a}
+                  <p className="pb-5 text-pretty text-[15px] leading-relaxed text-ink-soft">
+                    {typo(item.a)}
                   </p>
                 </details>
               ))}
@@ -79,12 +80,13 @@ export default function FaqPage() {
             <aside className="lg:sticky lg:top-28">
               <div className="rounded-[28px] border border-line bg-warm-soft/50 p-7">
                 <SectionLabel>Не нашли ответ?</SectionLabel>
-                <h2 className="mt-3 text-[22px] font-extrabold leading-tight tracking-[-0.02em] text-ink">
-                  Расскажите о задаче — подскажем решение
+                <h2 className="mt-3 text-balance text-[22px] font-extrabold leading-tight tracking-[-0.02em] text-ink">
+                  {typo("Расскажите о задаче — подскажем решение")}
                 </h2>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">
-                  Поможем подобрать тип модуля, комплектацию и рассчитать
-                  стоимость с доставкой на ваш объект.
+                <p className="mt-3 text-pretty text-[15px] leading-relaxed text-ink-soft">
+                  {typo(
+                    "Поможем подобрать тип модуля, комплектацию и рассчитать стоимость с доставкой на ваш объект.",
+                  )}
                 </p>
                 <div className="mt-6 flex flex-col gap-3">
                   <ButtonLink href="/kontakty" size="lg" withArrow>

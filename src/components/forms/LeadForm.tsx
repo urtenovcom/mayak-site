@@ -15,7 +15,6 @@ const schema = z.object({
     .string()
     .regex(/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/, "Введите телефон полностью"),
   comment: z.string().optional(),
-  consent: z.literal(true, { message: "Необходимо согласие" }),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -50,8 +49,6 @@ export function LeadForm({
     watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
-
-  const consent = watch("consent");
 
   async function onSubmit(values: FormValues) {
     await fetch("/api/lead", {
@@ -127,27 +124,21 @@ export function LeadForm({
         />
       )}
 
-      <label className="flex items-start gap-3 text-[13px] leading-snug text-ink-soft">
-        <input
-          type="checkbox"
-          className="mt-0.5 h-4 w-4 accent-[#421e2a]"
-          {...register("consent")}
-        />
-        <span>
-          Соглашаюсь с{" "}
-          <Link href="/privacy-policy" className="text-burgundy underline">
-            политикой конфиденциальности
-          </Link>{" "}
-          и обработкой персональных данных.
-        </span>
-      </label>
-      {errors.consent && (
-        <p className="-mt-2 text-[13px] text-burgundy">{errors.consent.message}</p>
-      )}
-
-      <Button type="submit" size="lg" withArrow disabled={isSubmitting || !consent}>
-        {isSubmitting ? "Отправляем…" : "Отправить заявку"}
-      </Button>
+      <div className="mt-1 flex flex-col gap-3">
+        <Button type="submit" size="lg" withArrow disabled={isSubmitting}>
+          {isSubmitting ? "Отправляем…" : "Отправить заявку"}
+        </Button>
+        <p className="text-[12px] leading-snug text-ink-soft/70">
+          Нажимая кнопку, вы соглашаетесь с{" "}
+          <Link
+            href="/personal-data-consent"
+            className="underline underline-offset-2 hover:text-ink"
+          >
+            обработкой персональных данных
+          </Link>
+          .
+        </p>
+      </div>
     </form>
   );
 }

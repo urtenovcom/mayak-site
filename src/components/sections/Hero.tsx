@@ -12,6 +12,7 @@ import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { SolutionModal } from "@/components/SolutionModal";
+import { typo } from "@/lib/typo";
 
 const REVEAL_AT = 3; // секунда появления контента
 
@@ -128,18 +129,20 @@ export function Hero() {
           </motion.span>
           <motion.h1
             variants={item}
-            className="mt-5 text-[38px] font-extrabold leading-[1.03] tracking-[-0.02em] sm:text-[58px] lg:text-[78px]"
+            className="mt-5 text-balance text-[38px] font-extrabold leading-[1.03] tracking-[-0.02em] sm:text-[58px] lg:text-[78px]"
           >
-            Модульные и металлические
+            Модульные и&nbsp;металлические
             <br />
-            конструкции <span className="text-[#d29aa8]">под ваши задачи</span>
+            конструкции{" "}
+            <span className="text-[#d29aa8]">под&nbsp;ваши&nbsp;задачи</span>
           </motion.h1>
           <motion.p
             variants={item}
-            className="mt-5 max-w-md text-[16px] leading-relaxed text-white/70"
+            className="mt-5 max-w-md text-pretty text-[16px] leading-relaxed text-white/70"
           >
-            Изготавливаем конструкции нужных размеров и комплектаций с учётом
-            условий эксплуатации.
+            {typo(
+              "Изготавливаем конструкции нужных размеров и комплектаций с учётом условий эксплуатации.",
+            )}
           </motion.p>
           <motion.div variants={item} className="mt-7">
             <SolutionModal

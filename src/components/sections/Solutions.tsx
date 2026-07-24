@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Icon, Check, ChevronLeft, ChevronRight } from "@/components/icons";
 import { SOLUTIONS, SOLUTION_PRODUCTS } from "@/lib/site";
 import { cn } from "@/lib/cn";
+import { typo } from "@/lib/typo";
 
 export function Solutions() {
   const [active, setActive] = useState(0);
@@ -28,8 +29,8 @@ export function Solutions() {
         <h2 className="mt-4 text-[34px] font-extrabold tracking-[-0.02em] text-ink sm:text-[42px]">
           Подберите направление
         </h2>
-        <p className="mt-3 max-w-xl text-[17px] text-ink-soft">
-          Выберите свою задачу — покажем подходящие решения.
+        <p className="mt-3 max-w-xl text-pretty text-[17px] text-ink-soft">
+          {typo("Выберите свою задачу — покажем подходящие решения.")}
         </p>
 
         {/* табы-направления */}
@@ -58,7 +59,7 @@ export function Solutions() {
                   <Icon name={s.icon} className="h-6 w-6" />
                 </span>
                 <span className="whitespace-pre-line text-[13px] font-semibold leading-tight text-ink/80">
-                  {s.label}
+                  {typo(s.label)}
                 </span>
               </button>
             );
@@ -69,12 +70,12 @@ export function Solutions() {
         <div className="mt-6 overflow-hidden rounded-[28px] border border-line bg-warm-soft/50">
           <div className="grid gap-8 p-7 sm:p-10 lg:grid-cols-2 lg:items-center">
             <div>
-              <SectionLabel>{current.kicker}</SectionLabel>
+              <SectionLabel>{typo(current.kicker)}</SectionLabel>
               <h3 className="mt-4 whitespace-pre-line text-[28px] font-extrabold leading-tight tracking-[-0.01em] text-ink sm:text-[34px]">
-                {current.title}
+                {typo(current.title)}
               </h3>
-              <p className="mt-4 max-w-md text-[16px] leading-relaxed text-ink-soft">
-                {current.description}
+              <p className="mt-4 max-w-md text-pretty text-[16px] leading-relaxed text-ink-soft">
+                {typo(current.description)}
               </p>
               <ul className="mt-7 flex flex-col gap-3.5">
                 {current.bullets.map((b) => (
@@ -82,7 +83,7 @@ export function Solutions() {
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-burgundy/10 text-burgundy">
                       <Check className="h-[14px] w-[14px]" />
                     </span>
-                    <span className="text-[15px] font-medium text-ink/85">{b}</span>
+                    <span className="text-[15px] font-medium text-ink/85">{typo(b)}</span>
                   </li>
                 ))}
               </ul>
