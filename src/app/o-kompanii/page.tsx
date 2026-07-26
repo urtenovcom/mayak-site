@@ -3,10 +3,7 @@ import { Container, SectionLabel } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ButtonLink } from "@/components/ui/Button";
 import { Check, Icon, type IconName } from "@/components/icons";
-import {
-  CertificateCard,
-  SERTIFIKAT_SOOTVETSTVIYA,
-} from "@/components/CertificateCard";
+import { CertificationBlock } from "@/components/CertificationBlock";
 import { typo } from "@/lib/typo";
 
 export const metadata: Metadata = {
@@ -50,6 +47,7 @@ export default function OKompaniiPage() {
     <>
       <PageHeader
         label="О компании"
+        image="/about-hero-v2.webp"
         title="О компании ООО «Маяк»"
         description="ООО «Маяк» изготавливает модульные и металлические конструкции для частных и коммерческих объектов. Мы подбираем решения под конкретную задачу: от формата и размеров до комплектации, отделки и условий эксплуатации."
       />
@@ -133,40 +131,7 @@ export default function OKompaniiPage() {
         </Container>
       </section>
 
-      <section className="border-b border-line">
-        <Container className="py-16 sm:py-20">
-          <SectionLabel>Документы</SectionLabel>
-          <h2 className="mt-3 max-w-2xl text-balance text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-ink sm:text-[34px]">
-            {typo("Сертификат соответствия на продукцию")}
-          </h2>
-          <p className="mt-4 max-w-2xl text-pretty text-[16px] leading-relaxed text-ink-soft">
-            {typo(
-              "Мобильные здания блок-контейнерного типа ООО «Маяк» прошли добровольную сертификацию и соответствуют требованиям технических условий. Документ можно открыть и скачать.",
-            )}
-          </p>
-          <div className="mt-8 grid gap-8 sm:grid-cols-[320px_1fr] sm:items-center">
-            <CertificateCard {...SERTIFIKAT_SOOTVETSTVIYA} />
-            <ul className="flex flex-col gap-3.5">
-              {[
-                "Продукция: мобильные здания блок-контейнерного типа, модель БК-00",
-                "№ РОСС RU.33026.04ЦЭТ0ОС002.С02759",
-                "Орган по сертификации: «ПРОМЭКСПЕРТИЗА»",
-                "Срок действия: 18.05.2026 — 17.05.2029",
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-start gap-3 text-[15px] text-ink"
-                >
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-burgundy/10 text-burgundy">
-                    <Check className="h-4 w-4" />
-                  </span>
-                  {typo(item)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Container>
-      </section>
+      <CertificationBlock />
 
       <section>
         <Container className="py-16 sm:py-20">

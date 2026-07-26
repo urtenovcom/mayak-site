@@ -45,6 +45,36 @@ export function Hero() {
       w.__heroRevealed = true;
       window.dispatchEvent(new Event("hero-revealed"));
     };
+
+    // Видео проигрывается один раз за визит (вкладку). При повторных заходах
+    // на главную сразу показываем финальный кадр — без повторного ролика.
+    const SEEN_KEY = "mayak-hero-played";
+    let alreadyPlayed = false;
+    try {
+      alreadyPlayed = sessionStorage.getItem(SEEN_KEY) === "1";
+    } catch {
+      /* sessionStorage недоступен — просто играем как обычно */
+    }
+
+    if (alreadyPlayed) {
+      // повторный заход за визит: сразу финальный кадр, контент — плавно.
+      // reveal откладываем на кадр, иначе framer не проигрывает hidden→show
+      // (мгновенная смена animate при монтировании).
+      setFrozen(true);
+      const t = setTimeout(reveal, 60);
+      return () => clearTimeout(t);
+    }
+
+    // первый заход за визит — помечаем и запускаем ролик
+    try {
+      sessionStorage.setItem(SEEN_KEY, "1");
+    } catch {
+      /* noop */
+    }
+    void v?.play?.().catch(() => {
+      // автоплей заблокирован — не критично, покажем контент и кадр по таймеру
+    });
+
     const onTime = () => {
       if (v && v.currentTime >= REVEAL_AT) reveal();
     };
@@ -68,7 +98,6 @@ export function Hero() {
       <video
         ref={videoRef}
         className="absolute inset-0 h-full w-full object-cover object-[center_92%]"
-        autoPlay
         muted
         playsInline
         preload="auto"
