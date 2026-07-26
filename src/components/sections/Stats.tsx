@@ -7,7 +7,7 @@ export function Stats() {
   return (
     <section className="py-16">
       <Container>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STATS.map((s) => (
             <div
               key={s.label}

@@ -17,6 +17,7 @@ import { CallbackModal } from "@/components/CallbackModal";
 import { Phone, Telegram, Max, Mail, Menu, Close } from "@/components/icons";
 import { NAV, CONTACTS } from "@/lib/site";
 import { cn } from "@/lib/cn";
+import { CopyMaxContact } from "@/components/CopyMaxContact";
 
 const telHref = (s: string) => "tel:" + s.replace(/[^\d+]/g, "");
 
@@ -45,10 +46,15 @@ function IconLink({
     <a
       href={href}
       aria-label={label}
-      title={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+      className="group/tooltip relative flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
     >
       {children}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-[calc(100%+10px)] z-50 hidden w-max max-w-60 -translate-x-1/2 translate-y-1 rounded-xl bg-carbon px-3 py-2 text-center text-[12px] font-semibold leading-snug text-white opacity-0 shadow-xl transition-all duration-150 before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-[5px] before:border-transparent before:border-b-carbon sm:block group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 group-focus-visible/tooltip:translate-y-0 group-focus-visible/tooltip:opacity-100"
+      >
+        {label}
+      </span>
     </a>
   );
 }
@@ -85,10 +91,16 @@ export function Header() {
     return () => window.removeEventListener("hero-revealed", onReveal);
   }, [isHome]);
 
-  // закрывать мобильное меню при переходе
-  useEffect(() => setMenuOpen(false), [pathname]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
 
-  const solid = scrolled || !isHome;
+  const solid = scrolled || !isHome || menuOpen;
   const hidden = isHome && !heroReady;
 
   return (
@@ -96,16 +108,20 @@ export function Header() {
       className={cn(
         "z-50 transition-[background-color,opacity,transform] duration-700 ease-out",
         isHome ? "fixed inset-x-0 top-0" : "sticky top-0",
-        solid ? "bg-burgundy/95 backdrop-blur-md" : "bg-transparent",
+        solid
+          ? menuOpen
+            ? "bg-burgundy"
+            : "bg-burgundy/95 backdrop-blur-md"
+          : "bg-transparent",
         hidden
           ? "pointer-events-none -translate-y-3 opacity-0"
-          : "translate-y-0 opacity-100",
+          : "opacity-100",
       )}
     >
       {/* тонкая линия под шапкой */}
       <div className="pointer-events-none absolute inset-x-0 top-[72px] h-px bg-white/[0.08]" />
 
-      <div className="mx-auto flex h-[72px] max-w-[1360px] items-center justify-between gap-5 px-5 sm:px-8">
+      <div className="relative z-[60] mx-auto flex h-[72px] max-w-[1360px] items-center justify-between gap-5 px-5 sm:px-8">
         <Logo white width={130} />
 
         <nav className="hidden items-center gap-7 lg:flex">
@@ -116,13 +132,17 @@ export function Header() {
 
         <div className="flex items-center gap-3">
           <div className="hidden items-center gap-1.5 lg:flex">
-            <IconLink href="https://t.me/" label={`Telegram: ${CONTACTS.telegram}`}>
+            <IconLink href="https://t.me/" label="Написать в Telegram">
               <Telegram className="h-[16px] w-[16px]" />
             </IconLink>
-            <IconLink href="#" label={`MAX: ${CONTACTS.max}`}>
+            <CopyMaxContact
+              label="Написать в MAX"
+              tooltipText="Скопировать номер"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+            >
               <Max className="h-[16px] w-[16px]" />
-            </IconLink>
-            <IconLink href={`mailto:${CONTACTS.email}`} label={CONTACTS.email}>
+            </CopyMaxContact>
+            <IconLink href={`mailto:${CONTACTS.email}`} label="Написать на почту">
               <Mail className="h-[16px] w-[16px]" />
             </IconLink>
           </div>
@@ -132,10 +152,17 @@ export function Header() {
               <a
                 key={p}
                 href={telHref(p)}
-                className="inline-flex h-10 items-center gap-1.5 rounded-full border border-white/20 px-3.5 text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/10"
+                aria-label={`Позвонить: ${p}`}
+                className="group/tooltip relative inline-flex h-10 items-center gap-1.5 rounded-full border border-white/20 px-3.5 text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/10"
               >
                 <Phone className="h-3.5 w-3.5 text-[#d29aa8]" />
                 {p}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-1/2 top-[calc(100%+10px)] z-50 w-max -translate-x-1/2 translate-y-1 rounded-xl bg-carbon px-3 py-2 text-[12px] font-semibold text-white opacity-0 shadow-xl transition-all duration-150 before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-[5px] before:border-transparent before:border-b-carbon group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 group-focus-visible/tooltip:translate-y-0 group-focus-visible/tooltip:opacity-100"
+                >
+                  Позвонить
+                </span>
               </a>
             ))}
           </div>
@@ -154,8 +181,10 @@ export function Header() {
           <button
             type="button"
             aria-label="Меню"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white lg:hidden"
+            className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/30 bg-burgundy/35 text-white backdrop-blur-sm lg:hidden"
           >
             {menuOpen ? <Close className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -164,45 +193,51 @@ export function Header() {
 
       {/* Мобильное меню */}
       <div
+        id="mobile-navigation"
         className={cn(
-          "overflow-hidden border-t border-white/[0.08] bg-burgundy/95 backdrop-blur-md transition-[max-height] duration-300 lg:hidden",
-          menuOpen ? "max-h-[520px]" : "max-h-0",
+          "fixed inset-0 z-50 overflow-y-auto bg-burgundy transition-transform duration-300 ease-out lg:hidden",
+          menuOpen ? "translate-x-0" : "pointer-events-none translate-x-full",
         )}
       >
-        <div className="mx-auto flex max-w-[1360px] flex-col gap-1 px-5 py-4 sm:px-8">
+        <div className="flex min-h-full flex-col px-5 pb-7 pt-[88px] sm:px-8">
           {NAV.map((i) => (
             <Link
               key={i.href}
               href={i.href}
-              className="rounded-xl px-3 py-3 text-[15px] font-medium text-white/85 hover:bg-white/5"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-xl px-3 py-3.5 text-[17px] font-medium text-white/85 hover:bg-white/5"
             >
               {i.label}
             </Link>
           ))}
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-5 grid gap-2">
             {CONTACTS.phones.map((p) => (
               <a
                 key={p}
                 href={telHref(p)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-2 text-[13px] font-semibold text-white"
+                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/25 px-4 text-[14px] font-semibold text-white"
               >
                 <Phone className="h-3.5 w-3.5 text-[#d29aa8]" />
                 {p}
               </a>
             ))}
           </div>
-          <div className="mt-2 flex items-center gap-2">
-            <IconLink href="https://t.me/" label="Telegram">
+          <div className="mt-2 grid grid-cols-3 gap-2 [&>a]:h-12 [&>a]:w-full">
+            <IconLink href="https://t.me/" label="Написать в Telegram">
               <Telegram className="h-[16px] w-[16px]" />
             </IconLink>
-            <IconLink href="#" label="MAX">
+            <CopyMaxContact
+              label="Написать в MAX"
+              tooltipText="Скопировать номер"
+              className="flex h-12 w-full items-center justify-center rounded-full border border-white/25 text-white/80 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+            >
               <Max className="h-[16px] w-[16px]" />
-            </IconLink>
-            <IconLink href={`mailto:${CONTACTS.email}`} label="Email">
+            </CopyMaxContact>
+            <IconLink href={`mailto:${CONTACTS.email}`} label="Написать на почту">
               <Mail className="h-[16px] w-[16px]" />
             </IconLink>
           </div>
-          <div className="mt-3">
+          <div className="mt-5">
             <CallbackModal
               trigger={
                 <Button variant="light" className="w-full">

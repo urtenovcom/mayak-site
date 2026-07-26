@@ -1,13 +1,17 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { Container, SectionLabel } from "@/components/ui/Container";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { typo } from "@/lib/typo";
+import { cn } from "@/lib/cn";
 
 export function PageHeader({
   label,
   title,
   description,
   image,
+  imageClassName,
+  contentClassName,
   children,
 }: {
   label: string;
@@ -15,11 +19,15 @@ export function PageHeader({
   description?: string;
   /** Фоновое фото — включает тёмный вариант шапки с белым текстом. */
   image?: string;
+  /** Позиционирование фонового фото для конкретной страницы. */
+  imageClassName?: string;
+  contentClassName?: string;
   children?: ReactNode;
 }) {
   const dark = Boolean(image);
 
   return (
+    <>
     <section className="relative overflow-hidden border-b border-line">
       {dark ? (
         <>
@@ -29,11 +37,10 @@ export function PageHeader({
             fill
             priority
             sizes="100vw"
-            className="object-cover object-center"
+            className={cn("object-cover object-center", imageClassName)}
           />
           {/* затемнение для читаемости текста */}
-          <div className="pointer-events-none absolute inset-0 bg-[#1a1013]/72" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#1a1013]/85 via-[#1a1013]/45 to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-black/45 sm:bg-transparent" />
         </>
       ) : (
         <>
@@ -42,7 +49,7 @@ export function PageHeader({
         </>
       )}
 
-      <Container className="relative py-16 sm:py-24">
+      <Container className={`relative py-16 sm:py-24 ${contentClassName ?? ""}`}>
         <span
           className={
             dark
@@ -71,5 +78,7 @@ export function PageHeader({
         {children && <div className="mt-8">{children}</div>}
       </Container>
     </section>
+    <Breadcrumbs />
+    </>
   );
 }

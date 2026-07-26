@@ -19,6 +19,7 @@ export const NAV = [
   { label: "Каталог", href: "/catalog" },
   { label: "Доставка", href: "/dostavka" },
   { label: "О компании", href: "/o-kompanii" },
+  { label: "Блог", href: "/blog" },
   { label: "Контакты", href: "/kontakty" },
 ];
 
@@ -27,12 +28,10 @@ export const FOOTER_NAV = {
     { label: "Каталог", href: "/catalog" },
     { label: "Доставка", href: "/dostavka" },
     { label: "О компании", href: "/o-kompanii" },
+    { label: "Блог", href: "/blog" },
     { label: "Контакты", href: "/kontakty" },
   ],
   Документы: [
-    { label: "Гарантия", href: "/garantiya" },
-    { label: "Сертификаты", href: "/sertifikaty" },
-    { label: "Реквизиты", href: "/rekvizity" },
     { label: "Политика конфиденциальности", href: "/privacy-policy" },
     {
       label: "Согласие на обработку\nперсональных данных",
@@ -201,8 +200,12 @@ export const PROCESS = [
 
 // Цифры доверия
 export const STATS = [
-  { value: "500+", label: "реализованных\nобъектов", icon: "cube" },
-  { value: "2024", label: "год основания\nкомпании", icon: "calendar" },
-  { value: "1993", label: "опыт команды\nв индустрии", icon: "user" },
-  { value: "100%", label: "индивидуальный\nподход", icon: "target" },
+  { value: "500+", label: "выполненных\nработ", icon: "cube" },
+  { value: "30+ лет", label: "опыт команды\nв строительной сфере", icon: "user" },
+  { value: "100%", label: "индивидуальный\nподход к задаче", icon: "target" },
+  {
+    value: "1 точка",
+    label: "ответственности: производство,\nдоставка и монтаж",
+    icon: "home",
+  },
 ];

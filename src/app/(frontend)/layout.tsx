@@ -1,17 +1,10 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+import "@flaticon/flaticon-uicons/css/regular/rounded.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ProductionMap } from "@/components/sections/ProductionMap";
 import { FloatingContact } from "@/components/FloatingContact";
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 const SITE_URL = "https://mayak-modul.ru";
 
@@ -49,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${manrope.variable} h-full`}>
+    <html lang="ru" className="h-full">
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Header />
         <main className="flex-1">{children}</main>

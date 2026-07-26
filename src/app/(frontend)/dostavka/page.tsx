@@ -49,6 +49,8 @@ export default function DostavkaPage() {
   return (
     <>
       <PageHeader
+        image="/delivery-hero-4k.webp"
+        contentClassName="flex min-h-[440px] flex-col justify-center sm:min-h-[520px]"
         label="Доставка и монтаж"
         title="Доставка и монтаж модульных конструкций"
         description="Возим собственным и привлечённым транспортом от производства в Раменском городском округе. Радиус доставки — до 300 км; дальние направления согласуем индивидуально."

@@ -117,7 +117,7 @@ export function BlockContainerAnatomy() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-[#1a1013] py-20 sm:py-28">
+    <section className="relative overflow-hidden bg-[#1a1013] py-16 sm:py-28">
       {/* Фон: реальная территория + градиент/свечения */}
       <div className="pointer-events-none absolute inset-0">
         <Image
@@ -148,8 +148,8 @@ export function BlockContainerAnatomy() {
         </div>
 
         {/* Сцена */}
-        <div className="relative mt-10 sm:mt-14">
-          <div className="relative aspect-[16/9]">
+        <div className="relative mt-8 sm:mt-14">
+          <div className="relative aspect-[4/3] sm:aspect-[16/9]">
             {/* Слои изображений (кроссфейд + блюр + зум) */}
             <motion.div
               className="absolute inset-0"
@@ -198,7 +198,7 @@ export function BlockContainerAnatomy() {
                 variants={{
                   show: { transition: { staggerChildren: 0.035, delayChildren: 0.12 } },
                 }}
-                className="absolute inset-0"
+                className="absolute inset-0 hidden sm:block"
               >
                 {spots.map((spot, i) => (
                   <motion.div
@@ -264,6 +264,29 @@ export function BlockContainerAnatomy() {
                 );
               })}
             </div>
+          </div>
+
+          <div className="mt-7 grid gap-3 sm:hidden">
+            {spots.map((spot, index) => (
+              <article
+                key={spot.title}
+                className="rounded-2xl border border-white/10 bg-white/[0.06] p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-burgundy text-[13px] font-bold text-white">
+                    {index + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-[15px] font-bold leading-snug text-white">
+                      {typo(spot.title)}
+                    </h3>
+                    <p className="mt-1.5 text-[13px] leading-relaxed text-white/60">
+                      {typo(spot.desc)}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </div>

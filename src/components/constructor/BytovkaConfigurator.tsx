@@ -9,7 +9,6 @@
    ============================================================ */
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Check, ChevronLeft, ChevronRight } from "@/components/icons";
@@ -17,7 +16,6 @@ import { cn } from "@/lib/cn";
 import {
   CLADDINGS,
   COLORS,
-  bytovkaRender,
   type CladdingId,
   type ColorId,
 } from "@/lib/configurator-assets";
@@ -39,6 +37,9 @@ type Config = {
   purpose: string;
   type: string;
   size: string;
+  customLength: string;
+  customWidth: string;
+  customHeight: string;
   cladding: CladdingId;
   color: ColorId;
   exploitation: string;
@@ -52,6 +53,9 @@ const DEFAULT: Config = {
   purpose: "",
   type: "Бытовка",
   size: "",
+  customLength: "",
+  customWidth: "",
+  customHeight: "",
   cladding: "proflist",
   color: "white",
   exploitation: "",
@@ -96,7 +100,12 @@ function specLines(c: Config) {
   return [
     ["Назначение", c.purpose || "—"],
     ["Тип конструкции", c.type || "—"],
-    ["Размер", c.size || "—"],
+    [
+      "Размер",
+      c.size === "Свой вариант"
+        ? `${c.customLength} × ${c.customWidth} × ${c.customHeight} м`
+        : c.size || "—",
+    ],
     ["Обшивка", cl.label],
     ["Цвет", `${co.label} · ${co.ral}`],
     ["Эксплуатация", c.exploitation || "—"],
@@ -119,30 +128,16 @@ function OptionCard({
   option,
   selected,
   onClick,
-  onPreview,
 }: {
   option: StepOption;
   selected: boolean;
   onClick: () => void;
-  /** Показ увеличенной картинки варианта у курсора (для опций с img). */
-  onPreview?: (img: string | null, x: number, y: number) => void;
 }) {
-  const previewHandlers =
-    option.img && onPreview
-      ? {
-          onMouseEnter: (e: { clientX: number; clientY: number }) =>
-            onPreview(option.img!, e.clientX, e.clientY),
-          onMouseMove: (e: { clientX: number; clientY: number }) =>
-            onPreview(option.img!, e.clientX, e.clientY),
-          onMouseLeave: () => onPreview(null, 0, 0),
-        }
-      : {};
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      {...previewHandlers}
       className={cn(
         "group relative flex w-full items-center gap-3 rounded-2xl border bg-white p-3 text-left transition-all",
         selected
@@ -150,18 +145,6 @@ function OptionCard({
           : "border-line hover:border-burgundy/25 hover:bg-warm-soft/40",
       )}
     >
-      {option.img && (
-        <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-line">
-          <Image
-            src={option.img}
-            alt=""
-            fill
-            sizes="56px"
-            loading="eager"
-            className="object-cover"
-          />
-        </span>
-      )}
       <span className="min-w-0 flex-1">
         <span className="block font-semibold tracking-tight text-ink">
           {option.label}
@@ -222,11 +205,6 @@ export function BytovkaConfigurator() {
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
-  // увеличенное превью варианта у курсора (двери/отделка)
-  const [preview, setPreview] = useState<{ img: string; x: number; y: number } | null>(null);
-  const handlePreview = (img: string | null, x: number, y: number) =>
-    setPreview(img ? { img, x, y } : null);
-
   const total = STEPS.length;
   const set = <K extends keyof Config>(key: K, value: Config[K]) =>
     setCfg((c) => ({ ...c, [key]: value }));
@@ -241,6 +219,9 @@ export function BytovkaConfigurator() {
 
   const phoneValid = PHONE_RE.test(phone);
   const nameValid = name.trim().length >= 2;
+  const customSizeValid = [cfg.customLength, cfg.customWidth, cfg.customHeight].every(
+    (value) => Number(value.replace(",", ".")) > 0,
+  );
 
   const canNext = useMemo(() => {
     switch (step) {
@@ -249,7 +230,7 @@ export function BytovkaConfigurator() {
       case 1:
         return !!cfg.type;
       case 2:
-        return !!cfg.size;
+        return !!cfg.size && (cfg.size !== "Свой вариант" || customSizeValid);
       case 3:
         return true;
       case 4:
@@ -267,7 +248,7 @@ export function BytovkaConfigurator() {
       default:
         return false;
     }
-  }, [step, cfg, nameValid, phoneValid]);
+  }, [step, cfg, customSizeValid, nameValid, phoneValid]);
 
   const isLast = step === total - 1;
 
@@ -331,15 +312,6 @@ export function BytovkaConfigurator() {
             подготовит индивидуальное предложение.
           </p>
           <div className="mt-6 w-full overflow-hidden rounded-2xl border border-line">
-            <div className="relative aspect-[4/3] w-full">
-              <Image
-                src={bytovkaRender(cfg.cladding, cfg.color)}
-                alt="Ваша конфигурация"
-                fill
-                sizes="480px"
-                className="object-cover"
-              />
-            </div>
             <ul className="divide-y divide-line bg-white text-left">
               {specLines(cfg).map(([k, v]) => (
                 <li
@@ -363,10 +335,27 @@ export function BytovkaConfigurator() {
   }
 
   return (
-    <>
-      <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
+    <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:items-stretch">
+      <aside className="flex min-w-0 min-h-[360px] flex-col justify-between rounded-[28px] bg-burgundy p-7 text-white sm:p-10 lg:h-[760px]">
+        <div>
+          <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-white/65">
+            Конструктор
+          </span>
+          <h2 className="mt-5 text-balance text-[34px] font-extrabold leading-[1.08] tracking-[-0.035em] sm:text-[42px]">
+            Подберите конструкцию под свою задачу
+          </h2>
+          <p className="mt-5 max-w-md text-[16px] leading-relaxed text-white/72">
+            Выберите назначение, размеры и комплектацию. После отправки заявки
+            менеджер подготовит индивидуальное предложение.
+          </p>
+        </div>
+        <p className="mt-10 border-t border-white/20 pt-6 text-[14px] leading-relaxed text-white/65">
+          Все параметры можно уточнить и скорректировать вместе с менеджером до
+          запуска конструкции в производство.
+        </p>
+      </aside>
       {/* —— Шаги —— */}
-      <div className="order-2 rounded-[28px] border border-line bg-white p-5 shadow-[0_24px_60px_-40px_rgba(12,16,20,0.35)] sm:p-8 lg:order-2">
+      <div className="flex min-w-0 flex-col rounded-[28px] border border-line bg-white p-5 shadow-[0_24px_60px_-40px_rgba(12,16,20,0.35)] sm:p-8 lg:h-[760px]">
         {/* Прогресс */}
         <div className="mb-7">
           <div className="flex items-center justify-between">
@@ -390,7 +379,7 @@ export function BytovkaConfigurator() {
           </div>
         </div>
 
-        <div className="min-h-[320px]">
+        <div className="min-h-[420px] flex-1 lg:min-h-0 lg:overflow-y-auto lg:pr-2">
           {/* 0 — Назначение */}
           {step === 0 && (
             <StepShell
@@ -444,7 +433,43 @@ export function BytovkaConfigurator() {
                     onClick={() => set("size", o.value)}
                   />
                 ))}
+                <OptionCard
+                  option={{
+                    value: "Свой вариант",
+                    label: "Свой вариант",
+                    hint: "Укажите точные габариты",
+                  }}
+                  selected={cfg.size === "Свой вариант"}
+                  onClick={() => set("size", "Свой вариант")}
+                />
               </div>
+              {cfg.size === "Свой вариант" && (
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  {([
+                    ["customLength", "Длина, м"],
+                    ["customWidth", "Ширина, м"],
+                    ["customHeight", "Высота, м"],
+                  ] as const).map(([key, label]) => (
+                    <label key={key} className="text-[13px] font-medium text-ink-soft">
+                      {label}
+                      <input
+                        className={cn(fieldClass, "mt-1.5")}
+                        inputMode="decimal"
+                        placeholder="0,0"
+                        value={cfg[key]}
+                        onChange={(event) =>
+                          set(key, event.target.value.replace(/[^\d.,]/g, ""))
+                        }
+                      />
+                    </label>
+                  ))}
+                </div>
+              )}
+              {touched && !canNext && (
+                <p className="mt-3 text-[13px] text-burgundy">
+                  Выберите размер или укажите длину, ширину и высоту
+                </p>
+              )}
             </StepShell>
           )}
 
@@ -452,7 +477,7 @@ export function BytovkaConfigurator() {
           {step === 3 && (
             <StepShell
               title="Обшивка и цвет"
-              subtitle="Выберите материал стен и цвет — здание справа меняется наглядно."
+              subtitle="Выберите материал стен и цвет будущей конструкции."
             >
               <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-burgundy/70">
                 Обшивка
@@ -471,16 +496,6 @@ export function BytovkaConfigurator() {
                         : "border-line hover:border-burgundy/25 hover:bg-warm-soft/40",
                     )}
                   >
-                    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-line">
-                      <Image
-                        src={bytovkaRender(cl.id, cfg.color)}
-                        alt=""
-                        fill
-                        sizes="48px"
-                        loading="eager"
-                        className="object-cover"
-                      />
-                    </span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-semibold text-ink">
                         {cl.label}
@@ -496,7 +511,7 @@ export function BytovkaConfigurator() {
               <span className="mt-6 block text-[13px] font-bold uppercase tracking-[0.14em] text-burgundy/70">
                 Цвет стен
               </span>
-              <div className="mt-3 flex flex-wrap gap-3">
+              <div className="mt-2 flex flex-wrap gap-3 p-1">
                 {COLORS.map((co) => (
                   <button
                     key={co.id}
@@ -508,7 +523,7 @@ export function BytovkaConfigurator() {
                     className={cn(
                       "relative h-11 w-11 rounded-full border transition-transform",
                       cfg.color === co.id
-                        ? "scale-110 border-burgundy ring-2 ring-burgundy/25"
+                        ? "border-burgundy ring-2 ring-burgundy/25"
                         : "border-line hover:scale-105",
                     )}
                     style={{ background: co.swatch }}
@@ -577,7 +592,6 @@ export function BytovkaConfigurator() {
                     option={o}
                     selected={cfg.door === o.value}
                     onClick={() => set("door", o.value)}
-                    onPreview={handlePreview}
                   />
                 ))}
               </div>
@@ -593,7 +607,7 @@ export function BytovkaConfigurator() {
           {step === 6 && (
             <StepShell
               title="Внутренняя отделка"
-              subtitle="Чем обшить стены и потолок внутри — превью справа показывает интерьер."
+              subtitle="Выберите материал для обшивки стен и потолка внутри."
             >
               <div className="grid gap-3 sm:grid-cols-2">
                 {INTERIOR.map((o) => (
@@ -602,7 +616,6 @@ export function BytovkaConfigurator() {
                     option={o}
                     selected={cfg.interior === o.value}
                     onClick={() => set("interior", o.value)}
-                    onPreview={handlePreview}
                   />
                 ))}
               </div>
@@ -747,50 +760,6 @@ export function BytovkaConfigurator() {
         </div>
       </div>
 
-      {/* —— Крупное превью (всегда внешний вид) —— */}
-      <aside className="order-1 lg:order-1 lg:h-full">
-        <div className="relative aspect-[4/3] w-full lg:aspect-auto lg:h-full lg:min-h-[520px]">
-          {CLADDINGS.map((cl) =>
-            COLORS.map((co) => (
-              <Image
-                key={`${cl.id}-${co.id}`}
-                src={bytovkaRender(cl.id, co.id)}
-                alt={`Бытовка, ${cl.label.toLowerCase()}, ${co.label.toLowerCase()}`}
-                fill
-                sizes="(max-width: 1024px) 100vw, 640px"
-                loading="eager"
-                className={cn(
-                  "object-contain transition-opacity duration-300",
-                  cl.id === cfg.cladding && co.id === cfg.color
-                    ? "opacity-100"
-                    : "opacity-0",
-                )}
-              />
-            )),
-          )}
-        </div>
-      </aside>
-      </div>
-
-      {/* Увеличенное превью варианта у курсора */}
-      {preview && (
-        <div
-          className="pointer-events-none fixed z-[60] hidden lg:block"
-          style={{ left: preview.x - 312, top: Math.max(12, preview.y - 110) }}
-        >
-          <div className="w-72 overflow-hidden rounded-2xl border border-line bg-white shadow-[0_30px_80px_-24px_rgba(12,16,20,0.5)]">
-            <div className="relative aspect-[4/3] w-full">
-              <Image
-                src={preview.img}
-                alt=""
-                fill
-                sizes="288px"
-                className="object-contain"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 }

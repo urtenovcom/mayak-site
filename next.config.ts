@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: process.cwd(),
+  },
   // Документы (PDF) должны открываться в браузере, а не скачиваться.
   async headers() {
     return [

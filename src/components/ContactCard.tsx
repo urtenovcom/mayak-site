@@ -1,6 +1,7 @@
 import { CONTACTS } from "@/lib/site";
-import { Phone, Send, Message, Mail } from "@/components/icons";
+import { Phone, Telegram, Max, Mail } from "@/components/icons";
 import { cn } from "@/lib/cn";
+import { CopyMaxContact } from "@/components/CopyMaxContact";
 
 const telHref = (s: string) => "tel:" + s.replace(/[^\d+]/g, "");
 
@@ -23,18 +24,17 @@ export function ContactRows({ className }: { className?: string }) {
           href="https://t.me/"
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink/90 transition-colors hover:bg-warm-soft"
         >
-          <Send className="h-[18px] w-[18px] text-burgundy" />
-          Telegram: {CONTACTS.telegram}
+          <Telegram className="h-[18px] w-[18px] text-burgundy" />
+          {CONTACTS.telegram}
         </a>
       </li>
       <li>
-        <a
-          href="#"
+        <CopyMaxContact
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink/90 transition-colors hover:bg-warm-soft"
         >
-          <Message className="h-[18px] w-[18px] text-burgundy" />
-          MAX: {CONTACTS.max}
-        </a>
+          <Max className="h-[18px] w-[18px] text-burgundy" />
+          {CONTACTS.max}
+        </CopyMaxContact>
       </li>
       <li>
         <a

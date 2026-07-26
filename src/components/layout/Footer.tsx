@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Phone, Telegram, Max, Mail, MapPin } from "@/components/icons";
 import { SITE, CONTACTS, FOOTER_NAV } from "@/lib/site";
 import { typo } from "@/lib/typo";
+import { CopyMaxContact } from "@/components/CopyMaxContact";
 
 const telHref = (s: string) => "tel:" + s.replace(/[^\d+]/g, "");
 
@@ -79,36 +80,47 @@ export function Footer() {
                 target="_blank"
                 rel="noopener"
                 aria-label={`Telegram: ${CONTACTS.telegram}`}
-                title={`Telegram: ${CONTACTS.telegram}`}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/75 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
+                className="group/tooltip relative flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/75 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
               >
                 <Telegram className="h-[18px] w-[18px]" />
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-[calc(100%+10px)] left-1/2 z-50 w-max max-w-60 -translate-x-1/2 translate-y-1 rounded-xl bg-white px-3 py-2 text-center text-[12px] font-semibold leading-snug text-carbon opacity-0 shadow-xl transition-all duration-150 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-[5px] before:border-transparent before:border-t-white group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 group-focus-visible/tooltip:translate-y-0 group-focus-visible/tooltip:opacity-100"
+                >
+                  Telegram: {CONTACTS.telegram}
+                </span>
               </a>
-              <a
-                href="#"
-                target="_blank"
-                rel="noopener"
-                aria-label={`MAX: ${CONTACTS.max}`}
-                title={`MAX: ${CONTACTS.max}`}
+              <CopyMaxContact
+                label={`MAX: ${CONTACTS.max}`}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/75 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
               >
                 <Max className="h-[18px] w-[18px]" />
-              </a>
+              </CopyMaxContact>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-white/10 py-7 text-sm text-white/45 sm:flex-row sm:items-center sm:justify-between">
-          <span>
-            © {SITE.legalName} {SITE.year}
-          </span>
+        <div className="flex flex-col items-start gap-4 border-t border-white/10 py-7 text-sm text-white/45 sm:flex-row sm:justify-between">
+          <div className="flex flex-col items-start gap-2">
+            <span>
+              © {SITE.legalName} {SITE.year}
+            </span>
+            <a
+              href="https://алазар.рф"
+              target="_blank"
+              rel="noopener"
+              className="transition-colors hover:text-white"
+            >
+              Разработано Alazar Studio
+            </a>
+          </div>
           <a
-            href="https://алазар.рф"
+            href="https://www.flaticon.com/uicons"
             target="_blank"
             rel="noopener"
             className="transition-colors hover:text-white"
           >
-            Разработано Alazar Studio
+            Иконки Flaticon UIcons
           </a>
         </div>
       </Container>

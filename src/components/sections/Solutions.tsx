@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Container, SectionLabel } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
@@ -14,9 +14,6 @@ export function Solutions() {
   const [slide, setSlide] = useState(0);
   const current = SOLUTIONS[active];
   const products = SOLUTION_PRODUCTS[current.id] ?? [];
-
-  // при смене направления — на первый пример
-  useEffect(() => setSlide(0), [active]);
 
   const count = products.length;
   const currentProduct = products[slide];
@@ -34,15 +31,23 @@ export function Solutions() {
         </p>
 
         {/* табы-направления */}
-        <div className="mt-9 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
+        <div className="sticky top-[72px] z-30 -mx-5 mt-6 flex gap-2 overflow-x-auto border-y border-line bg-background/95 px-5 py-3 backdrop-blur-md [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:static sm:mx-0 sm:mt-9 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none lg:grid-cols-7">
           {SOLUTIONS.map((s, i) => {
             const isActive = i === active;
             return (
               <button
                 key={s.id}
-                onClick={() => setActive(i)}
+                onClick={(event) => {
+                  setActive(i);
+                  setSlide(0);
+                  event.currentTarget.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "center",
+                  });
+                }}
                 className={cn(
-                  "group flex flex-col items-center gap-3 rounded-[20px] border px-3 py-5 text-center transition-all duration-200",
+                  "group flex min-h-14 min-w-[168px] shrink-0 items-center gap-2.5 rounded-2xl border px-3 py-2 text-left transition-all duration-200 sm:min-h-0 sm:min-w-0 sm:flex-col sm:gap-3 sm:rounded-[20px] sm:px-3 sm:py-5 sm:text-center",
                   isActive
                     ? "border-burgundy/40 bg-white shadow-[0_18px_40px_-22px_rgba(66,30,42,0.4)]"
                     : "border-line bg-warm-soft/60 hover:bg-white hover:shadow-[0_14px_30px_-20px_rgba(66,30,42,0.3)]",
@@ -50,15 +55,15 @@ export function Solutions() {
               >
                 <span
                   className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-2xl transition-colors",
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors sm:h-12 sm:w-12 sm:rounded-2xl",
                     isActive
                       ? "bg-burgundy text-white"
                       : "bg-white text-burgundy",
                   )}
                 >
-                  <Icon name={s.icon} className="h-6 w-6" />
+                  <Icon name={s.icon} className="h-5 w-5 sm:h-6 sm:w-6" />
                 </span>
-                <span className="whitespace-pre-line text-[13px] font-semibold leading-tight text-ink/80">
+                <span className="text-[12px] font-semibold leading-tight text-ink/80 sm:whitespace-pre-line sm:text-[13px]">
                   {typo(s.label)}
                 </span>
               </button>

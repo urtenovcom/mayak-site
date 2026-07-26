@@ -8,7 +8,7 @@ import { typo } from "@/lib/typo";
 
 export function BigCTA() {
   return (
-    <section className="py-8">
+    <section className="bg-warm-soft/45 py-8">
       <Container>
         <div className="relative overflow-hidden rounded-[28px] bg-burgundy px-7 py-12 text-white sm:px-12 sm:py-16">
           {/* наш рендер — выглядывает справа наполовину */}

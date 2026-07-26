@@ -90,14 +90,19 @@ export function Requisites({
                 type="button"
                 onClick={() => copy(row.label, row.value)}
                 aria-label={`Скопировать: ${row.label}`}
-                title={copied === row.label ? "Скопировано" : "Скопировать"}
-                className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center self-start rounded-lg border border-line bg-white text-ink-soft transition-colors hover:border-burgundy/40 hover:text-burgundy sm:mt-0 sm:self-auto"
+                className="group/tooltip relative mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center self-start rounded-lg border border-line bg-white text-ink-soft transition-colors hover:border-burgundy/40 hover:text-burgundy sm:mt-0 sm:self-auto"
               >
                 {copied === row.label ? (
                   <Check className="h-4 w-4 text-burgundy" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-[calc(100%+8px)] right-0 z-50 hidden w-max translate-y-1 rounded-xl bg-carbon px-3 py-2 text-[12px] font-semibold text-white opacity-0 shadow-xl transition-all duration-150 before:absolute before:right-3 before:top-full before:border-[5px] before:border-transparent before:border-t-carbon sm:block group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 group-focus-visible/tooltip:translate-y-0 group-focus-visible/tooltip:opacity-100"
+                >
+                  {copied === row.label ? "Скопировано" : "Скопировать"}
+                </span>
               </button>
             </div>
           ))}
