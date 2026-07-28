@@ -109,8 +109,15 @@ function formatMessage(lead: Lead) {
   return lines.join("\n");
 }
 
-/** Дописывает заявку в JSONL-журнал, если задан LEAD_LOG_FILE. */
-async function appendToLogFile(lead: Lead) {
+/**
+ * Дописывает заявку в JSONL-журнал, если задан LEAD_LOG_FILE.
+ *
+ * Экспортируется, потому что это САМЫЙ БЫСТРЫЙ надёжный канал: запись в файл
+ * на своей же машине занимает миллисекунды и не зависит ни от сети, ни от
+ * чужого процесса. Роут заявки пишет журнал ДО ответа и на этом основании
+ * отвечает «принято», а базу и уведомления оставляет на потом.
+ */
+export async function appendToLogFile(lead: Lead) {
   const file = process.env.LEAD_LOG_FILE;
   if (!file) return { channel: "file" as const, ok: false, skipped: true };
 
@@ -455,6 +462,32 @@ export async function saveLead(lead: Lead) {
   console.info("[LEAD]", JSON.stringify({ ...lead, delivery: summarize(results) }));
 
   return results;
+}
+
+/**
+ * ЗАПИСЬ В БАЗУ ПОСЛЕ ОТВЕТА: то же, что делает saveLead, но без журнала —
+ * его роут уже записал до ответа — и без права бросить исключение.
+ *
+ * Отдельная функция, а не флаг у saveLead: у них разные обязательства.
+ * saveLead выполняется на пути ответа, и его результат решает, что увидит
+ * посетитель. Этот код выполняется, когда ответ уже ушёл: бросать ему нельзя
+ * (необработанный отказ промиса), а единственный доступный способ сообщить о
+ * беде — строка в логе.
+ */
+export async function storeLeadAfterResponse(lead: Lead, journal: ChannelResult) {
+  try {
+    const admin = await sendToAdminApi(lead);
+
+    console.info(
+      "[LEAD]",
+      JSON.stringify({ ...lead, delivery: summarize([admin, journal]) }),
+    );
+
+    return admin;
+  } catch (error) {
+    console.error("[LEAD] запись в базу не выполнена:", error);
+    return { channel: "admin" as const, ok: false, skipped: false };
+  }
 }
 
 /**
