@@ -14,8 +14,6 @@ const ROUTE_LABELS: Record<string, string> = {
   constructor: "Конструктор",
   dostavka: "Доставка",
   faq: "Вопросы и ответы",
-  konfigurator: "Конфигуратор",
-  "konfigurator-preview": "Предпросмотр конфигуратора",
   kontakty: "Контакты",
   "o-kompanii": "О компании",
   "personal-data-consent": "Согласие на обработку персональных данных",
@@ -32,7 +30,12 @@ function getLabel(segment: string) {
   );
 }
 
-export function Breadcrumbs() {
+/**
+ * @param current подпись последнего сегмента. Нужна там, где человеческое
+ *   название знает только страница: у товара каталога это имя из базы, и
+ *   держать его в словаре выше нельзя — товары заводят в панели.
+ */
+export function Breadcrumbs({ current }: { current?: string } = {}) {
   const pathname = usePathname();
 
   if (pathname === "/") return null;
@@ -61,7 +64,7 @@ export function Breadcrumbs() {
                 <ChevronRight className="h-3.5 w-3.5 shrink-0 text-ink-soft/45" />
                 {isCurrent ? (
                   <span aria-current="page" className="font-semibold text-ink">
-                    {getLabel(segment)}
+                    {current ?? getLabel(segment)}
                   </span>
                 ) : (
                   <Link

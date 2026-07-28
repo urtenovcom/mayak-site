@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/legal/LegalLayout";
-import { CONTACTS, SITE } from "@/lib/site";
+import { getContacts } from "@/lib/content";
+import { SITE } from "@/lib/site";
 
 // Шаблон, требует проверки юристом (152-ФЗ).
 
@@ -8,9 +9,13 @@ export const metadata: Metadata = {
   title: "Согласие на обработку персональных данных",
   description:
     "Согласие пользователя на обработку персональных данных ООО «Маяк» в соответствии с Федеральным законом № 152-ФЗ.",
+  // Без своего `alternates` страница унаследовала бы canonical главной.
+  alternates: { canonical: "/personal-data-consent" },
 };
 
-export default function PersonalDataConsentPage() {
+export default async function PersonalDataConsentPage() {
+  const contacts = await getContacts();
+
   return (
     <LegalLayout
       label="Документы"
@@ -61,10 +66,10 @@ export default function PersonalDataConsentPage() {
         Оператору соответствующее письменное обращение на адрес электронной
         почты{" "}
         <a
-          href={`mailto:${CONTACTS.email}`}
+          href={`mailto:${contacts.email}`}
           className="text-burgundy font-semibold underline underline-offset-2"
         >
-          {CONTACTS.email}
+          {contacts.email}
         </a>
         . После получения отзыва Оператор прекращает обработку персональных
         данных и уничтожает их, за исключением случаев, когда обработка должна

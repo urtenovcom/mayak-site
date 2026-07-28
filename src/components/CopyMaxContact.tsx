@@ -2,12 +2,12 @@
 
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
-import { CONTACTS } from "@/lib/site";
+import { useContacts } from "@/components/ContactsProvider";
 
 export function CopyMaxContact({
   children,
   className,
-  label = `MAX: ${CONTACTS.max}`,
+  label,
   tooltipText = "Скопировать номер MAX",
   showTooltip = true,
 }: {
@@ -17,15 +17,20 @@ export function CopyMaxContact({
   tooltipText?: string;
   showTooltip?: boolean;
 }) {
+  // Номер берём из контекста, а не из статических данных: он редактируется
+  // в админке. Значение по умолчанию для label считается здесь же — в
+  // параметрах функции хук вызвать нельзя.
+  const { max } = useContacts();
+  const accessibleLabel = label ?? `MAX: ${max}`;
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   async function copyNumber() {
     try {
-      await navigator.clipboard.writeText(CONTACTS.max);
+      await navigator.clipboard.writeText(max);
     } catch {
       const input = document.createElement("textarea");
-      input.value = CONTACTS.max;
+      input.value = max;
       input.style.position = "fixed";
       input.style.opacity = "0";
       document.body.appendChild(input);
@@ -44,7 +49,7 @@ export function CopyMaxContact({
       <button
         type="button"
         onClick={copyNumber}
-        aria-label={`${label}. Скопировать номер`}
+        aria-label={`${accessibleLabel}. Скопировать номер`}
         className={`group/max relative ${className ?? ""}`}
       >
         {children}

@@ -1,8 +1,9 @@
 import { Container, SectionLabel } from "@/components/ui/Container";
-import { PROCESS } from "@/lib/site";
+import type { SiteProcessStep } from "@/lib/content-types";
 import { typo } from "@/lib/typo";
 
-export function Process() {
+/** Этапы работы. Данные приходят пропом из страницы (база админки + фолбэк). */
+export function Process({ steps }: { steps: SiteProcessStep[] }) {
   return (
     <section className="border-y border-line bg-warm-soft/40 py-20 sm:py-24">
       <Container>
@@ -17,7 +18,7 @@ export function Process() {
         </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {PROCESS.map((step) => (
+          {steps.map((step) => (
             <div
               key={step.n}
               className="group relative rounded-[22px] border border-line bg-white p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_24px_48px_-26px_rgba(66,30,42,0.3)]"

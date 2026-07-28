@@ -6,12 +6,25 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Check, Icon, type IconName } from "@/components/icons";
 import { CertificationBlock } from "@/components/CertificationBlock";
 import { typo } from "@/lib/typo";
-import { CONTACTS, SITE } from "@/lib/site";
+import { getContacts } from "@/lib/content";
+import { telHref } from "@/lib/phone";
+import { OG_BASE, SITE } from "@/lib/site";
 
+// `alternates` и `openGraph` сливаются поверхностно: без своих значений
+// страница унаследовала бы canonical и og:title главной.
 export const metadata: Metadata = {
-  title: "О компании — ООО «Маяк»",
+  // Суффикс «— ООО «Маяк»» подставляет title.template корневого layout.
+  title: "О компании",
   description:
     "ООО «Маяк» — производитель модульных и металлических конструкций: бытовки, блок-модули, санитарные блоки и ангары. Собственное производство, контроль качества и индивидуальный подход к каждой задаче.",
+  alternates: { canonical: "/o-kompanii" },
+  openGraph: {
+    ...OG_BASE,
+    type: "website",
+    title: "О компании ООО «Маяк»",
+    description:
+      "Производство модульных и металлических конструкций: собственный цех, контроль качества и решения под задачу заказчика.",
+  },
 };
 
 const stats: { value: string; label: string; icon: IconName }[] = [
@@ -44,7 +57,9 @@ const advantages: { title: string; text: string }[] = [
   },
 ];
 
-export default function OKompaniiPage() {
+export default async function OKompaniiPage() {
+  const contacts = await getContacts();
+
   return (
     <>
       <PageHeader
@@ -232,12 +247,14 @@ export default function OKompaniiPage() {
               </p>
             </div>
             <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-              <a href={`mailto:${CONTACTS.email}`} className="font-bold text-burgundy hover:underline">
-                {CONTACTS.email}
+              <a href={`mailto:${contacts.email}`} className="font-bold text-burgundy hover:underline">
+                {contacts.email}
               </a>
-              <a href={`tel:${CONTACTS.phones[0].replace(/\D/g, "")}`} className="font-bold text-burgundy hover:underline">
-                {CONTACTS.phones[0]}
-              </a>
+              {contacts.phones.map((phone) => (
+                <a key={phone} href={telHref(phone)} className="font-bold text-burgundy hover:underline">
+                  {phone}
+                </a>
+              ))}
             </div>
           </div>
         </Container>

@@ -3,20 +3,31 @@ import { Solutions } from "@/components/sections/Solutions";
 import { Process } from "@/components/sections/Process";
 import { Stats } from "@/components/sections/Stats";
 import { BigCTA } from "@/components/sections/BigCTA";
+import { Faq } from "@/components/sections/Faq";
 import { Container, SectionLabel } from "@/components/ui/Container";
 import { BlockContainerAnatomy } from "@/components/sections/BlockContainerAnatomy";
 import { BytovkaConfigurator } from "@/components/constructor/BytovkaConfigurator";
 import { ArticleCard } from "@/components/blog/ArticleCard";
-import { BLOG_ARTICLES } from "@/lib/blog";
+import { getArticles, getFaqItems, getProcessSteps, getSolutions, getStats } from "@/lib/content";
 import { ButtonLink } from "@/components/ui/Button";
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Четыре блока главной читают контент из базы админки. Запросы независимы,
+  // поэтому идут параллельно; фолбэк на статические данные — внутри getters.
+  const [stats, solutions, process, articles, faq] = await Promise.all([
+    getStats(),
+    getSolutions(),
+    getProcessSteps(),
+    getArticles(),
+    getFaqItems(),
+  ]);
+
   return (
     <>
       <Hero />
-      <Stats />
-      <Solutions />
-      <Process />
+      <Stats stats={stats} />
+      <Solutions solutions={solutions} />
+      <Process steps={process} />
       <BlockContainerAnatomy />
       <section id="konfigurator" className="border-t border-line py-20 sm:py-24">
         <Container>
@@ -41,12 +52,15 @@ export default function HomePage() {
           </div>
 
           <div className="mt-10 grid gap-7 md:grid-cols-2 xl:grid-cols-3">
-            {BLOG_ARTICLES.map((article) => (
+            {articles.map((article) => (
               <ArticleCard key={article.slug} article={article} />
             ))}
           </div>
         </Container>
       </section>
+      {/* На главной — только вопросы, отмеченные для неё в панели;
+          на /faq остаются все опубликованные. */}
+      <Faq items={faq.filter((item) => item.showOnHome !== false)} />
       <BigCTA />
     </>
   );

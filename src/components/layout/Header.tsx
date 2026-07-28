@@ -15,11 +15,11 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { CallbackModal } from "@/components/CallbackModal";
 import { Phone, Telegram, Max, Mail, Menu, Close } from "@/components/icons";
-import { NAV, CONTACTS } from "@/lib/site";
+import { NAV } from "@/lib/site";
+import { telHref, telegramHref } from "@/lib/phone";
 import { cn } from "@/lib/cn";
 import { CopyMaxContact } from "@/components/CopyMaxContact";
-
-const telHref = (s: string) => "tel:" + s.replace(/[^\d+]/g, "");
+import { useContacts } from "@/components/ContactsProvider";
 
 function NavLink({ href, label }: { href: string; label: string }) {
   return (
@@ -60,6 +60,13 @@ function IconLink({
 }
 
 export function Header() {
+  // Контакты приходят из базы через ContactsProvider (layout); вне провайдера
+  // хук отдаёт статические — шапка не может остаться без телефона.
+  const contacts = useContacts();
+  // Адрес чата собирается из контакта: правка номера в админке меняет и ссылку.
+  // null — значение не разобрать, тогда иконки Telegram просто нет (вести на
+  // пустой `https://t.me/` хуже, чем не показать её вовсе).
+  const telegram = telegramHref(contacts.telegram);
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
@@ -132,9 +139,11 @@ export function Header() {
 
         <div className="flex items-center gap-3">
           <div className="hidden items-center gap-1.5 lg:flex">
-            <IconLink href="https://t.me/" label="Написать в Telegram">
-              <Telegram className="h-[16px] w-[16px]" />
-            </IconLink>
+            {telegram && (
+              <IconLink href={telegram} label="Написать в Telegram">
+                <Telegram className="h-[16px] w-[16px]" />
+              </IconLink>
+            )}
             <CopyMaxContact
               label="Написать в MAX"
               tooltipText="Скопировать номер"
@@ -142,13 +151,13 @@ export function Header() {
             >
               <Max className="h-[16px] w-[16px]" />
             </CopyMaxContact>
-            <IconLink href={`mailto:${CONTACTS.email}`} label="Написать на почту">
+            <IconLink href={`mailto:${contacts.email}`} label="Написать на почту">
               <Mail className="h-[16px] w-[16px]" />
             </IconLink>
           </div>
 
           <div className="hidden items-center gap-2 xl:flex">
-            {CONTACTS.phones.map((p) => (
+            {contacts.phones.map((p) => (
               <a
                 key={p}
                 href={telHref(p)}
@@ -211,7 +220,7 @@ export function Header() {
             </Link>
           ))}
           <div className="mt-5 grid gap-2">
-            {CONTACTS.phones.map((p) => (
+            {contacts.phones.map((p) => (
               <a
                 key={p}
                 href={telHref(p)}
@@ -223,9 +232,11 @@ export function Header() {
             ))}
           </div>
           <div className="mt-2 grid grid-cols-3 gap-2 [&>a]:h-12 [&>a]:w-full">
-            <IconLink href="https://t.me/" label="Написать в Telegram">
-              <Telegram className="h-[16px] w-[16px]" />
-            </IconLink>
+            {telegram && (
+              <IconLink href={telegram} label="Написать в Telegram">
+                <Telegram className="h-[16px] w-[16px]" />
+              </IconLink>
+            )}
             <CopyMaxContact
               label="Написать в MAX"
               tooltipText="Скопировать номер"
@@ -233,7 +244,7 @@ export function Header() {
             >
               <Max className="h-[16px] w-[16px]" />
             </CopyMaxContact>
-            <IconLink href={`mailto:${CONTACTS.email}`} label="Написать на почту">
+            <IconLink href={`mailto:${contacts.email}`} label="Написать на почту">
               <Mail className="h-[16px] w-[16px]" />
             </IconLink>
           </div>

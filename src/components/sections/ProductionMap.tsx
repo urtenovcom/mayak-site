@@ -10,11 +10,14 @@
    ============================================================ */
 
 import { useEffect, useRef, useState } from "react";
+import { PRODUCTION } from "@/lib/site";
 import { typo } from "@/lib/typo";
 
-// Точка производства (деревня Рыбаки, Раменский г.о., МО)
-const POINT: [number, number] = [55.6, 38.1];
-const RADIUS_KM = 300;
+// Точка производства (деревня Рыбаки, Раменский г.о., МО) и радиус зоны берутся
+// из общего источника: те же значения уходят в разметку schema.org, и разъехаться
+// карта с ней не должна.
+const POINT: [number, number] = PRODUCTION.point;
+const RADIUS_KM = PRODUCTION.serviceRadiusMeters / 1000;
 const KEY =
   process.env.NEXT_PUBLIC_YANDEX_MAPS_KEY ||
   "498c8430-33dc-4a80-9e73-0e3aba218664";

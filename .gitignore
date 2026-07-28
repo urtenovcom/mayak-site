@@ -42,9 +42,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Retained local CMS backup data (not used by the website)
-/payload.db
-/media/
+# Локальные доступы (пароли не должны попадать в историю репозитория)
+docs/*.local.md
 
-# локальные настройки Claude Code
-.claude/settings.local.json
+# Журнал заявок (персональные данные)
+/leads.jsonl
+
+# Админка — отдельный репозиторий со своей историей, см. docs/DEPLOY.md
+/react-project-admin-back/

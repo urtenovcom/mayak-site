@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LegalLayout } from "@/components/legal/LegalLayout";
-import { CONTACTS, SITE } from "@/lib/site";
+import { getContacts } from "@/lib/content";
+import { SITE } from "@/lib/site";
 
 // Шаблон, требует проверки юристом (152-ФЗ).
 
@@ -8,9 +9,13 @@ export const metadata: Metadata = {
   title: "Политика конфиденциальности",
   description:
     "Политика обработки персональных данных ООО «Маяк» в соответствии с Федеральным законом № 152-ФЗ «О персональных данных».",
+  // Без своего `alternates` страница унаследовала бы canonical главной.
+  alternates: { canonical: "/privacy-policy" },
 };
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const contacts = await getContacts();
+
   return (
     <LegalLayout
       label="Документы"
@@ -31,10 +36,10 @@ export default function PrivacyPolicyPage() {
         Оператором является {SITE.legalName}. Контактный адрес для обращений по
         вопросам обработки персональных данных:{" "}
         <a
-          href={`mailto:${CONTACTS.email}`}
+          href={`mailto:${contacts.email}`}
           className="text-burgundy font-semibold underline underline-offset-2"
         >
-          {CONTACTS.email}
+          {contacts.email}
         </a>
         .
       </p>
@@ -92,10 +97,10 @@ export default function PrivacyPolicyPage() {
         По всем вопросам, связанным с обработкой персональных данных, вы можете
         обратиться к Оператору по адресу электронной почты{" "}
         <a
-          href={`mailto:${CONTACTS.email}`}
+          href={`mailto:${contacts.email}`}
           className="text-burgundy font-semibold underline underline-offset-2"
         >
-          {CONTACTS.email}
+          {contacts.email}
         </a>
         .
       </p>

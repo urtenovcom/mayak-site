@@ -3,13 +3,25 @@ import { Container, SectionLabel } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { Check, Icon, MapPin, type IconName } from "@/components/icons";
-import { CONTACTS } from "@/lib/site";
+import { getContacts } from "@/lib/content";
 import { typo } from "@/lib/typo";
+import { OG_BASE } from "@/lib/site";
 
+// `alternates` и `openGraph` сливаются поверхностно: без своих значений
+// страница унаследовала бы canonical и og:title главной.
 export const metadata: Metadata = {
-  title: "Доставка модульных зданий — ООО «Маяк»",
+  // Суффикс «— ООО «Маяк»» подставляет title.template корневого layout.
+  title: "Доставка модульных зданий",
   description:
     "Доставляем модульные и металлические конструкции от производства в Раменском городском округе (деревня Рыбаки) в радиусе до 300 км. Дальние направления — по индивидуальному согласованию.",
+  alternates: { canonical: "/dostavka" },
+  openGraph: {
+    ...OG_BASE,
+    type: "website",
+    title: "Доставка и монтаж модульных зданий",
+    description:
+      "Доставка от производства в Раменском городском округе, основная зона — до 300 км. Монтаж на подготовленное основание.",
+  },
 };
 
 const factors: { icon: IconName; title: string; text: string }[] = [
@@ -45,7 +57,9 @@ const factors: { icon: IconName; title: string; text: string }[] = [
   },
 ];
 
-export default function DostavkaPage() {
+export default async function DostavkaPage() {
+  const contacts = await getContacts();
+
   return (
     <>
       <PageHeader
@@ -68,7 +82,7 @@ export default function DostavkaPage() {
                 Точка производства
               </p>
               <p className="mt-1 text-2xl font-extrabold tracking-[-0.02em] text-ink">
-                {CONTACTS.address}
+                {contacts.address}
               </p>
               <p className="mt-2 max-w-md text-pretty text-[15px] leading-relaxed text-ink-soft">
                 {typo(

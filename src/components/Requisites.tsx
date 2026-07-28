@@ -1,23 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { CONTACTS, SITE } from "@/lib/site";
+import { useContacts } from "@/components/ContactsProvider";
+import { SITE } from "@/lib/site";
 import { Copy, Check } from "@/components/icons";
 
 // Публичные реквизиты компании. Банковские реквизиты на сайте не размещаются —
 // по запросу. Юридический адрес добавляется, когда будет предоставлен.
-const REQUISITES: { label: string; value: string }[] = [
-  {
-    label: "Полное наименование",
-    value: "Общество с ограниченной ответственностью «Маяк»",
-  },
-  { label: "Сокращённое наименование", value: SITE.legalName },
-  { label: "ИНН", value: "9703183643" },
-  { label: "КПП", value: "770301001" },
-  { label: "ОГРН", value: "1247700440954" },
-  { label: "Адрес производства", value: CONTACTS.address },
-  { label: "Электронная почта", value: CONTACTS.email },
-];
+// Адрес и почта редактируются в админке, поэтому список собирается на месте.
+function buildRequisites(address: string, email: string): { label: string; value: string }[] {
+  return [
+    {
+      label: "Полное наименование",
+      value: "Общество с ограниченной ответственностью «Маяк»",
+    },
+    { label: "Сокращённое наименование", value: SITE.legalName },
+    { label: "ИНН", value: "9703183643" },
+    { label: "КПП", value: "770301001" },
+    { label: "ОГРН", value: "1247700440954" },
+    { label: "Адрес производства", value: address },
+    { label: "Электронная почта", value: email },
+  ];
+}
 
 // Копирование с запасным путём через execCommand (для не-HTTPS-контекста
 // и браузеров без Clipboard API).
@@ -53,6 +57,8 @@ export function Requisites({
   note?: boolean;
   className?: string;
 }) {
+  const { address, email } = useContacts();
+  const requisites = buildRequisites(address, email);
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = async (label: string, value: string) => {
@@ -66,7 +72,7 @@ export function Requisites({
     <div className={className}>
       <div className="overflow-hidden rounded-[22px] border border-line bg-warm-soft">
         <dl className="divide-y divide-line">
-          {REQUISITES.map((row) => (
+          {requisites.map((row) => (
             <div
               key={row.label}
               className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-baseline sm:gap-6 sm:px-6"

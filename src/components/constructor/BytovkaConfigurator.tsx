@@ -11,8 +11,10 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { HoneypotField } from "@/components/forms/HoneypotField";
 import { Check, ChevronLeft, ChevronRight } from "@/components/icons";
 import { cn } from "@/lib/cn";
+import { LEAD_ERROR_TEXT, sendLead, type LeadError } from "@/lib/lead-client";
 import {
   CLADDINGS,
   COLORS,
@@ -202,8 +204,10 @@ export function BytovkaConfigurator() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [comment, setComment] = useState("");
+  const [company, setCompany] = useState("");
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<LeadError | null>(null);
   const [done, setDone] = useState(false);
   const total = STEPS.length;
   const set = <K extends keyof Config>(key: K, value: Config[K]) =>
@@ -276,21 +280,21 @@ export function BytovkaConfigurator() {
       return;
     }
     setSubmitting(true);
-    await fetch("/api/lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name.trim(),
-        phone,
-        comment:
-          buildComment(cfg) +
-          (comment.trim() ? `\nКомментарий: ${comment.trim()}` : ""),
-        source: "Заявка из Конструктора (бытовка)",
-        page: typeof window !== "undefined" ? window.location.pathname : "",
-        utm: typeof window !== "undefined" ? window.location.search : "",
-      }),
-    }).catch(() => null);
+    setError(null);
+    const failure = await sendLead({
+      name: name.trim(),
+      phone,
+      comment:
+        buildComment(cfg) +
+        (comment.trim() ? `\nКомментарий: ${comment.trim()}` : ""),
+      source: "Заявка из Конструктора (бытовка)",
+      company,
+    });
     setSubmitting(false);
+    if (failure) {
+      setError(failure);
+      return;
+    }
     setDone(true);
   }
 
@@ -724,10 +728,21 @@ export function BytovkaConfigurator() {
                   </Link>
                   .
                 </p>
+
+                <HoneypotField
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                />
               </div>
             </StepShell>
           )}
         </div>
+
+        {error && (
+          <p className="mt-6 rounded-2xl border border-burgundy/25 bg-burgundy/5 px-4 py-3 text-[13px] leading-snug text-burgundy">
+            {LEAD_ERROR_TEXT[error]}
+          </p>
+        )}
 
         {/* Навигация */}
         <div className="mt-8 flex items-center justify-between gap-3 border-t border-line pt-6">

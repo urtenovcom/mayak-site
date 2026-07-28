@@ -54,6 +54,21 @@ export const User = uicon("user");
 export const Target = uicon("target");
 export const Box = uicon("square");
 
+/* Типы блоков статьи — меню «+ Добавить блок» в админке и разметка блога.
+   В REGISTRY ниже они намеренно не входят: тот список наполняет выпадающий
+   выбор иконки направления, и блочные иконки там были бы лишними. */
+export const Heading = uicon("heading");
+export const Paragraph = uicon("align-left");
+export const List = uicon("list");
+export const Table = uicon("table-list");
+export const Quote = uicon("quote-right");
+export const Picture = uicon("picture");
+export const Gallery = uicon("images");
+export const Video = uicon("video-camera-alt");
+export const Document = uicon("document");
+export const Accordion = uicon("rectangle-list");
+export const Download = uicon("download");
+
 /* Фирменные знаки сохраняем оригинальными. */
 export const Telegram = (p: IconProps) => (
   <svg viewBox="0 0 22.6196 18.9356" fill="currentColor" xmlns="http://www.w3.org/2000/svg" {...p}>
@@ -82,6 +97,9 @@ const REGISTRY = {
 } as const;
 
 export type IconName = keyof typeof REGISTRY;
+
+/** Все доступные имена иконок — источник для выпадающих списков админки. */
+export const ICON_NAMES = Object.keys(REGISTRY) as IconName[];
 
 export function Icon({ name, ...props }: { name: IconName } & IconProps) {
   const Component = REGISTRY[name];

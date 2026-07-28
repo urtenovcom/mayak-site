@@ -6,8 +6,10 @@ import { z } from "zod";
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { HoneypotField } from "@/components/forms/HoneypotField";
 import { Check } from "@/components/icons";
 import { cn } from "@/lib/cn";
+import { LEAD_ERROR_TEXT, sendLead, type LeadError } from "@/lib/lead-client";
 
 const schema = z.object({
   name: z.string().min(2, "Укажите имя"),
@@ -15,6 +17,7 @@ const schema = z.object({
     .string()
     .regex(/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/, "Введите телефон полностью"),
   comment: z.string().optional(),
+  company: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -42,6 +45,7 @@ export function LeadForm({
   compact?: boolean;
 }) {
   const [done, setDone] = useState(false);
+  const [error, setError] = useState<LeadError | null>(null);
   const {
     register,
     handleSubmit,
@@ -51,17 +55,12 @@ export function LeadForm({
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   async function onSubmit(values: FormValues) {
-    await fetch("/api/lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...values,
-        source,
-        page: typeof window !== "undefined" ? window.location.pathname : "",
-        utm:
-          typeof window !== "undefined" ? window.location.search : "",
-      }),
-    }).catch(() => null);
+    setError(null);
+    const failure = await sendLead({ ...values, source });
+    if (failure) {
+      setError(failure);
+      return;
+    }
     setDone(true);
   }
 
@@ -124,10 +123,17 @@ export function LeadForm({
         />
       )}
 
+      <HoneypotField {...register("company")} />
+
       <div className="mt-1 flex flex-col gap-3">
         <Button type="submit" size="lg" withArrow disabled={isSubmitting}>
           {isSubmitting ? "Отправляем…" : "Отправить заявку"}
         </Button>
+        {error && (
+          <p className="text-[13px] leading-snug text-burgundy">
+            {LEAD_ERROR_TEXT[error]}
+          </p>
+        )}
         <p className="text-[12px] leading-snug text-ink-soft/70">
           Нажимая кнопку, вы соглашаетесь с{" "}
           <Link

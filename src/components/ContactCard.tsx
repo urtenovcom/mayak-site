@@ -1,14 +1,19 @@
-import { CONTACTS } from "@/lib/site";
+import { getContacts } from "@/lib/content";
+import { telHref, telegramHref } from "@/lib/phone";
 import { Phone, Telegram, Max, Mail } from "@/components/icons";
 import { cn } from "@/lib/cn";
 import { CopyMaxContact } from "@/components/CopyMaxContact";
 
-const telHref = (s: string) => "tel:" + s.replace(/[^\d+]/g, "");
+export async function ContactRows({ className }: { className?: string }) {
+  const contacts = await getContacts();
+  // Ссылка на чат — из значения контакта, а не константой в вёрстке.
+  const telegram = telegramHref(contacts.telegram);
+  const rowClass =
+    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink/90";
 
-export function ContactRows({ className }: { className?: string }) {
   return (
     <ul className={cn("flex flex-col", className)}>
-      {CONTACTS.phones.map((p) => (
+      {contacts.phones.map((p) => (
         <li key={p}>
           <a
             href={telHref(p)}
@@ -20,29 +25,35 @@ export function ContactRows({ className }: { className?: string }) {
         </li>
       ))}
       <li>
-        <a
-          href="https://t.me/"
-          className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink/90 transition-colors hover:bg-warm-soft"
-        >
-          <Telegram className="h-[18px] w-[18px] text-burgundy" />
-          {CONTACTS.telegram}
-        </a>
+        {telegram ? (
+          <a href={telegram} className={cn(rowClass, "transition-colors hover:bg-warm-soft")}>
+            <Telegram className="h-[18px] w-[18px] text-burgundy" />
+            {contacts.telegram}
+          </a>
+        ) : (
+          // Разобрать значение не удалось — показываем контакт текстом, а не
+          // ссылкой в никуда.
+          <span className={rowClass}>
+            <Telegram className="h-[18px] w-[18px] text-burgundy" />
+            {contacts.telegram}
+          </span>
+        )}
       </li>
       <li>
         <CopyMaxContact
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink/90 transition-colors hover:bg-warm-soft"
         >
           <Max className="h-[18px] w-[18px] text-burgundy" />
-          {CONTACTS.max}
+          {contacts.max}
         </CopyMaxContact>
       </li>
       <li>
         <a
-          href={`mailto:${CONTACTS.email}`}
+          href={`mailto:${contacts.email}`}
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink/90 transition-colors hover:bg-warm-soft"
         >
           <Mail className="h-[18px] w-[18px] text-burgundy" />
-          {CONTACTS.email}
+          {contacts.email}
         </a>
       </li>
     </ul>
