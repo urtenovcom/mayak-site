@@ -114,7 +114,10 @@ export function Header() {
     <header
       className={cn(
         "z-50 transition-[background-color,opacity,transform] duration-700 ease-out",
-        isHome ? "fixed inset-x-0 top-0" : "sticky top-0",
+        // При открытом меню — fixed: sticky в контейнере с overflow:hidden
+        // (его ставит меню) перестаёт «липнуть», и лого с крестиком уезжают
+        // выше вьюпорта. Fixed держит их на месте поверх оверлея меню.
+        isHome || menuOpen ? "fixed inset-x-0 top-0" : "sticky top-0",
         solid
           ? menuOpen
             ? "bg-burgundy"

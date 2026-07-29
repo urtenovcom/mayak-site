@@ -95,7 +95,7 @@ export async function Footer() {
                   href={telegram}
                   target="_blank"
                   rel="noopener"
-                  aria-label={`Telegram: ${contacts.telegram}`}
+                  aria-label="Написать в Telegram"
                   className="group/tooltip relative flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/75 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
                 >
                   <Telegram className="h-[18px] w-[18px]" />
@@ -103,12 +103,15 @@ export async function Footer() {
                     aria-hidden="true"
                     className="pointer-events-none absolute bottom-[calc(100%+10px)] left-1/2 z-50 w-max max-w-60 -translate-x-1/2 translate-y-1 rounded-xl bg-white px-3 py-2 text-center text-[12px] font-semibold leading-snug text-carbon opacity-0 shadow-xl transition-all duration-150 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-[5px] before:border-transparent before:border-t-white group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 group-focus-visible/tooltip:translate-y-0 group-focus-visible/tooltip:opacity-100"
                   >
-                    Telegram: {contacts.telegram}
+                    Написать в Telegram
                   </span>
                 </a>
               )}
               <CopyMaxContact
-                label={`MAX: ${contacts.max}`}
+                label="Написать в MAX"
+                tooltipText="Скопировать номер"
+                tooltipAbove
+                tooltipLight
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/75 transition-colors hover:border-white/40 hover:bg-white/10 hover:text-white"
               >
                 <Max className="h-[18px] w-[18px]" />

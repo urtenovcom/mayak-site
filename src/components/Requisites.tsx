@@ -75,28 +75,30 @@ export function Requisites({
           {requisites.map((row) => (
             <div
               key={row.label}
-              className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-baseline sm:gap-6 sm:px-6"
+              className="flex items-start gap-4 px-5 py-4 sm:items-baseline sm:gap-6 sm:px-6"
             >
-              <dt className="shrink-0 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-soft sm:w-56">
-                {row.label}
-              </dt>
-              <dd className="flex-1 text-[15px] font-medium text-ink">
-                {row.label === "Электронная почта" ? (
-                  <a
-                    href={`mailto:${row.value}`}
-                    className="text-burgundy underline underline-offset-2"
-                  >
-                    {row.value}
-                  </a>
-                ) : (
-                  row.value
-                )}
-              </dd>
+              <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+                <dt className="shrink-0 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-soft sm:w-56">
+                  {row.label}
+                </dt>
+                <dd className="min-w-0 flex-1 break-words text-[15px] font-medium text-ink">
+                  {row.label === "Электронная почта" ? (
+                    <a
+                      href={`mailto:${row.value}`}
+                      className="text-burgundy underline underline-offset-2"
+                    >
+                      {row.value}
+                    </a>
+                  ) : (
+                    row.value
+                  )}
+                </dd>
+              </div>
               <button
                 type="button"
                 onClick={() => copy(row.label, row.value)}
                 aria-label={`Скопировать: ${row.label}`}
-                className="group/tooltip relative mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center self-start rounded-lg border border-line bg-white text-ink-soft transition-colors hover:border-burgundy/40 hover:text-burgundy sm:mt-0 sm:self-auto"
+                className="group/tooltip relative inline-flex h-8 w-8 shrink-0 items-center justify-center self-start rounded-lg border border-line bg-white text-ink-soft transition-colors hover:border-burgundy/40 hover:text-burgundy sm:self-auto"
               >
                 {copied === row.label ? (
                   <Check className="h-4 w-4 text-burgundy" />

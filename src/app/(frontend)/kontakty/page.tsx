@@ -230,11 +230,11 @@ export default async function KontaktyPage() {
                 </p>
               </div>
             </div>
-            <div className="mt-auto grid auto-cols-fr grid-flow-col gap-2 pt-10">
+            <div className="mt-auto flex flex-col gap-2 pt-10 sm:flex-row sm:flex-wrap">
               {primaryPhone && (
                 <a
                   href={telHref(primaryPhone)}
-                  className="inline-flex h-12 min-w-0 items-center justify-center gap-2 rounded-full bg-white px-2 text-[13px] font-bold text-burgundy transition-transform hover:-translate-y-0.5"
+                  className="inline-flex h-14 min-w-0 items-center justify-center gap-2.5 rounded-full sm:flex-1 bg-white px-5 text-[15px] font-bold text-burgundy transition-transform hover:-translate-y-0.5 sm:min-w-[128px]"
                 >
                   <Phone className="h-4 w-4" />
                   Позвонить
@@ -243,13 +243,13 @@ export default async function KontaktyPage() {
               {telegram && (
                 <a
                   href={telegram}
-                  className="inline-flex h-12 min-w-0 items-center justify-center gap-2 rounded-full border border-white/25 px-2 text-[13px] font-bold text-white transition-colors hover:bg-white/10"
+                  className="inline-flex h-14 min-w-0 items-center justify-center gap-2.5 rounded-full sm:flex-1 border border-white/25 px-5 text-[15px] font-bold text-white transition-colors hover:bg-white/10 sm:min-w-[128px]"
                 >
                   <Telegram className="h-4 w-4" />
                   Telegram
                 </a>
               )}
-              <CopyMaxContact className="inline-flex h-12 min-w-0 items-center justify-center gap-2 rounded-full border border-white/25 px-2 text-[13px] font-bold text-white transition-colors hover:bg-white/10">
+              <CopyMaxContact className="inline-flex h-14 min-w-0 items-center justify-center gap-2.5 rounded-full sm:flex-1 border border-white/25 px-5 text-[15px] font-bold text-white transition-colors hover:bg-white/10 sm:min-w-[128px]">
                 <Max className="h-4 w-4" />
                 MAX
               </CopyMaxContact>
