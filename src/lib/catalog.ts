@@ -1,4 +1,10 @@
 // Каталог решений ООО «Маяк» — модульные и металлические конструкции
+//
+// Файл читает Node напрямую при пересборке снимка сида, поэтому импорты здесь
+// могут быть только type-only (они стираются) — исполняемых импортов быть не
+// должно.
+
+import type { GalleryImage } from "./media";
 
 export type ProductType =
   | "Модульное здание"
@@ -21,8 +27,21 @@ export type ProductOption =
 export type Product = {
   id: string;
   name: string;
-  /** 3D-рендер в public/renders (WebP) */
+  /**
+   * Обложка товара: её показывают карточка каталога, карточки смежных
+   * товаров, JSON-LD и метаданные ссылки. Всегда входит в `images`.
+   */
   image: string;
+  /**
+   * Все фотографии товара в порядке показа, включая обложку.
+   *
+   * У каждой своё описание (`alt`): его читают поисковики и те, кто картинку
+   * не видит. Пустое описание — легальный случай (декоративная картинка).
+   * Пути только локальные, от одного «/»: внешний адрес next/image не рисует,
+   * а бросает исключение и роняет страницу. У эталонных товаров тут один
+   * рендер — галерея наполняется через панель.
+   */
+  images: GalleryImage[];
   purpose: string;
   type: ProductType;
   tags: string[];
@@ -33,6 +52,18 @@ export type Product = {
   description: string;
   complectation: string[];
 };
+
+/**
+ * Адрес страницы товара.
+ *
+ * Slug лежит в `id`: у статических товаров это человекочитаемый ключ, у
+ * товаров из базы `content.ts` кладёт туда колонку `slug`. Одна функция на всё
+ * приложение — иначе адрес разъезжается между карточкой, картой сайта и
+ * структурированными данными.
+ */
+export function productPath(slug: string): string {
+  return `/catalog/${slug}`;
+}
 
 // Справочники для фильтров (источник истины для UI)
 export const PRODUCT_TYPES: ProductType[] = [
@@ -89,6 +120,7 @@ export const PRODUCTS: Product[] = [
     id: "bytovka-stroitelnaya",
     name: "Строительная бытовка 6×2.4",
     image: render("bytovka-stroit"),
+    images: [{ src: render("bytovka-stroit"), alt: "Строительная бытовка 6×2.4" }],
     purpose: "Бытовка для стройплощадки, дачи и временного размещения.",
     type: "Бытовка",
     tags: ["Стройплощадка", "Дача и участок"],
@@ -110,6 +142,7 @@ export const PRODUCTS: Product[] = [
     id: "bytovka-uteplennaya",
     name: "Бытовка утеплённая 6×3 «Зима»",
     image: render("bytovka-zima"),
+    images: [{ src: render("bytovka-zima"), alt: "Бытовка утеплённая 6×3 «Зима»" }],
     purpose: "Тёплая бытовка для круглогодичного проживания бригады.",
     type: "Бытовка",
     tags: ["Проживание", "Вахта", "Стройплощадка"],
@@ -131,6 +164,7 @@ export const PRODUCTS: Product[] = [
     id: "blok-konteyner",
     name: "Блок-контейнер 6×2.4",
     image: render("blok-konteyner"),
+    images: [{ src: render("blok-konteyner"), alt: "Блок-контейнер 6×2.4" }],
     purpose: "Универсальный модуль под бытовку, склад или подсобку.",
     type: "Блок-контейнер",
     tags: ["Стройплощадка", "Склад"],
@@ -152,6 +186,7 @@ export const PRODUCTS: Product[] = [
     id: "blok-konteyner-sendvich",
     name: "Блок-контейнер из сэндвич-панелей",
     image: render("sendvich"),
+    images: [{ src: render("sendvich"), alt: "Блок-контейнер из сэндвич-панелей" }],
     purpose: "Тёплый модуль с гладкой отделкой для офиса и проживания.",
     type: "Блок-контейнер",
     tags: ["Стройплощадка", "Проживание", "Офис"],
@@ -173,6 +208,7 @@ export const PRODUCTS: Product[] = [
     id: "ofisnyy-blok-konteyner",
     name: "Офисный блок-контейнер 8×3",
     image: render("ofis"),
+    images: [{ src: render("ofis"), alt: "Офисный блок-контейнер 8×3" }],
     purpose: "Тёплый офис или штаб строительства на объекте.",
     type: "Блок-контейнер",
     tags: ["Офис", "Стройплощадка"],
@@ -194,6 +230,7 @@ export const PRODUCTS: Product[] = [
     id: "abk",
     name: "Административно-бытовой комплекс (АБК)",
     image: render("abk"),
+    images: [{ src: render("abk"), alt: "Административно-бытовой комплекс (АБК)" }],
     purpose: "Здание из модулей под штаб, офис и бытовые помещения.",
     type: "Модульное здание",
     tags: ["Офис", "Проживание", "Вахта"],
@@ -215,6 +252,7 @@ export const PRODUCTS: Product[] = [
     id: "modulnoe-zdanie",
     name: "Модульное здание",
     image: render("modulnoe-zdanie"),
+    images: [{ src: render("modulnoe-zdanie"), alt: "Модульное здание" }],
     purpose: "Составное здание под офис, столовую или производство.",
     type: "Модульное здание",
     tags: ["Офис", "Производство"],
@@ -236,6 +274,7 @@ export const PRODUCTS: Product[] = [
     id: "obshchezhitie",
     name: "Модульное общежитие",
     image: render("obshchezhitie"),
+    images: [{ src: render("obshchezhitie"), alt: "Модульное общежитие" }],
     purpose: "Жилой корпус для вахты и размещения бригад.",
     type: "Модульное здание",
     tags: ["Проживание", "Вахта"],
@@ -257,6 +296,7 @@ export const PRODUCTS: Product[] = [
     id: "sanitarnyy-blok-konteyner",
     name: "Санитарный блок-контейнер",
     image: render("san"),
+    images: [{ src: render("san"), alt: "Санитарный блок-контейнер" }],
     purpose: "Готовый санблок с душевыми и туалетами для объекта.",
     type: "Санитарный модуль",
     tags: ["Санитария", "Стройплощадка", "Производство"],
@@ -278,6 +318,7 @@ export const PRODUCTS: Product[] = [
     id: "fap-medpunkt",
     name: "Модульный ФАП / медпункт",
     image: render("fap"),
+    images: [{ src: render("fap"), alt: "Модульный ФАП / медпункт" }],
     purpose: "Модульный медпункт или ФАП под ключ.",
     type: "Модульное здание",
     tags: ["Санитария", "Производство"],
@@ -299,6 +340,7 @@ export const PRODUCTS: Product[] = [
     id: "post-ohrany",
     name: "Пост охраны 2×2",
     image: render("post-ohrany"),
+    images: [{ src: render("post-ohrany"), alt: "Пост охраны 2×2" }],
     purpose: "Компактная проходная и пост охраны на въезде.",
     type: "Блок-контейнер",
     tags: ["Стройплощадка", "Производство", "Офис"],
@@ -320,6 +362,7 @@ export const PRODUCTS: Product[] = [
     id: "blok-konteyner-sklad",
     name: "Блок-контейнер под склад",
     image: render("sklad"),
+    images: [{ src: render("sklad"), alt: "Блок-контейнер под склад" }],
     purpose: "Складской модуль для хранения на объекте.",
     type: "Блок-контейнер",
     tags: ["Склад", "Производство"],
@@ -341,6 +384,7 @@ export const PRODUCTS: Product[] = [
     id: "blok-konteyner-oborudovanie",
     name: "Блок-контейнер под оборудование",
     image: render("oborudovanie"),
+    images: [{ src: render("oborudovanie"), alt: "Блок-контейнер под оборудование" }],
     purpose: "Технический модуль под установку оборудования.",
     type: "Блок-контейнер",
     tags: ["Производство", "Склад"],
@@ -362,6 +406,7 @@ export const PRODUCTS: Product[] = [
     id: "hozblok",
     name: "Хозблок дачный 3×2",
     image: render("hozblok"),
+    images: [{ src: render("hozblok"), alt: "Хозблок дачный 3×2" }],
     purpose: "Компактный хозблок для инструмента и хранения на участке.",
     type: "Хозблок",
     tags: ["Дача и участок"],
@@ -383,6 +428,7 @@ export const PRODUCTS: Product[] = [
     id: "angar",
     name: "Ангар на металлокаркасе",
     image: render("angar"),
+    images: [{ src: render("angar"), alt: "Ангар на металлокаркасе" }],
     purpose: "Складское или производственное помещение нужной площади.",
     type: "Металлическая конструкция",
     tags: ["Склад", "Производство"],
@@ -404,6 +450,7 @@ export const PRODUCTS: Product[] = [
     id: "naves",
     name: "Металлический навес",
     image: render("naves"),
+    images: [{ src: render("naves"), alt: "Металлический навес" }],
     purpose: "Навес для техники, материалов или зоны хранения.",
     type: "Металлическая конструкция",
     tags: ["Склад", "Производство", "Дача и участок"],

@@ -1,10 +1,39 @@
 // Централизованные данные сайта ООО «Маяк»
 
+/** Канонический адрес прода. Используется в метаданных, sitemap, robots и JSON-LD. */
+export const SITE_URL = "https://mayak-modul.ru";
+
 export const SITE = {
   name: "ООО «Маяк»",
   legalName: 'ООО «Маяк»',
   tagline: "Производство модульных зданий",
-  year: 2024,
+  /** Год основания — начало диапазона копирайта в подвале. */
+  foundedYear: 2024,
+};
+
+/**
+ * Общие поля openGraph для страниц.
+ *
+ * Next сливает метаданные поверхностно: страница, которая задаёт свой
+ * `openGraph`, заменяет родительский объект ЦЕЛИКОМ. Без этой подмеси у неё
+ * пропадут `og:site_name` и `og:locale` из корневого layout — вместе с ними
+ * из карточки шаринга исчезнет название компании.
+ */
+export const OG_BASE = { locale: "ru_RU", siteName: SITE.name } as const;
+
+/**
+ * Точка производства и зона работ.
+ *
+ * Координаты — те же, по которым центрируется карта на сайте: держать их в двух
+ * местах нельзя, иначе разметка и карта однажды покажут разное. Значение
+ * приблизительное (уровень населённого пункта); когда будут точные координаты
+ * площадки, меняется здесь одно и применяется везде.
+ */
+export const PRODUCTION = {
+  /** [широта, долгота] */
+  point: [55.6, 38.1] as [number, number],
+  /** Основная зона доставки и монтажа, метры. */
+  serviceRadiusMeters: 300_000,
 };
 
 export const CONTACTS = {
@@ -19,6 +48,7 @@ export const NAV = [
   { label: "Каталог", href: "/catalog" },
   { label: "Доставка", href: "/dostavka" },
   { label: "О компании", href: "/o-kompanii" },
+  { label: "Блог", href: "/blog" },
   { label: "Контакты", href: "/kontakty" },
 ];
 
@@ -27,12 +57,10 @@ export const FOOTER_NAV = {
     { label: "Каталог", href: "/catalog" },
     { label: "Доставка", href: "/dostavka" },
     { label: "О компании", href: "/o-kompanii" },
+    { label: "Блог", href: "/blog" },
     { label: "Контакты", href: "/kontakty" },
   ],
   Документы: [
-    { label: "Гарантия", href: "/garantiya" },
-    { label: "Сертификаты", href: "/sertifikaty" },
-    { label: "Реквизиты", href: "/rekvizity" },
     { label: "Политика конфиденциальности", href: "/privacy-policy" },
     {
       label: "Согласие на обработку\nперсональных данных",
@@ -201,8 +229,12 @@ export const PROCESS = [
 
 // Цифры доверия
 export const STATS = [
-  { value: "500+", label: "реализованных\nобъектов", icon: "cube" },
-  { value: "2024", label: "год основания\nкомпании", icon: "calendar" },
-  { value: "1993", label: "опыт команды\nв индустрии", icon: "user" },
-  { value: "100%", label: "индивидуальный\nподход", icon: "target" },
+  { value: "500+", label: "выполненных\nработ", icon: "cube" },
+  { value: "30+ лет", label: "опыт команды\nв строительной сфере", icon: "user" },
+  { value: "100%", label: "индивидуальный\nподход к задаче", icon: "target" },
+  {
+    value: "1 точка",
+    label: "ответственности: производство,\nдоставка и монтаж",
+    icon: "home",
+  },
 ];

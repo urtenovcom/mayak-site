@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-stale-*/
 /out/
 
 # production
@@ -26,6 +27,7 @@
 
 # debug
 npm-debug.log*
+.codex-dev.*.log
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
@@ -40,5 +42,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# локальные настройки Claude Code
-.claude/settings.local.json
+# Локальные доступы (пароли не должны попадать в историю репозитория)
+docs/*.local.md
+
+# Журнал заявок (персональные данные)
+/leads.jsonl
+
+# Админка — отдельный репозиторий со своей историей, см. docs/DEPLOY.md
+/react-project-admin-back/

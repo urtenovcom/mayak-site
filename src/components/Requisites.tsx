@@ -1,23 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { CONTACTS, SITE } from "@/lib/site";
+import { useContacts } from "@/components/ContactsProvider";
+import { SITE } from "@/lib/site";
 import { Copy, Check } from "@/components/icons";
 
 // Публичные реквизиты компании. Банковские реквизиты на сайте не размещаются —
 // по запросу. Юридический адрес добавляется, когда будет предоставлен.
-const REQUISITES: { label: string; value: string }[] = [
-  {
-    label: "Полное наименование",
-    value: "Общество с ограниченной ответственностью «Маяк»",
-  },
-  { label: "Сокращённое наименование", value: SITE.legalName },
-  { label: "ИНН", value: "9703183643" },
-  { label: "КПП", value: "770301001" },
-  { label: "ОГРН", value: "1247700440954" },
-  { label: "Адрес производства", value: CONTACTS.address },
-  { label: "Электронная почта", value: CONTACTS.email },
-];
+// Адрес и почта редактируются в админке, поэтому список собирается на месте.
+function buildRequisites(address: string, email: string): { label: string; value: string }[] {
+  return [
+    {
+      label: "Полное наименование",
+      value: "Общество с ограниченной ответственностью «Маяк»",
+    },
+    { label: "Сокращённое наименование", value: SITE.legalName },
+    { label: "ИНН", value: "9703183643" },
+    { label: "КПП", value: "770301001" },
+    { label: "ОГРН", value: "1247700440954" },
+    { label: "Адрес производства", value: address },
+    { label: "Электронная почта", value: email },
+  ];
+}
 
 // Копирование с запасным путём через execCommand (для не-HTTPS-контекста
 // и браузеров без Clipboard API).
@@ -53,6 +57,8 @@ export function Requisites({
   note?: boolean;
   className?: string;
 }) {
+  const { address, email } = useContacts();
+  const requisites = buildRequisites(address, email);
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = async (label: string, value: string) => {
@@ -66,38 +72,45 @@ export function Requisites({
     <div className={className}>
       <div className="overflow-hidden rounded-[22px] border border-line bg-warm-soft">
         <dl className="divide-y divide-line">
-          {REQUISITES.map((row) => (
+          {requisites.map((row) => (
             <div
               key={row.label}
-              className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-baseline sm:gap-6 sm:px-6"
+              className="flex items-start gap-4 px-5 py-4 sm:items-baseline sm:gap-6 sm:px-6"
             >
-              <dt className="shrink-0 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-soft sm:w-56">
-                {row.label}
-              </dt>
-              <dd className="flex-1 text-[15px] font-medium text-ink">
-                {row.label === "Электронная почта" ? (
-                  <a
-                    href={`mailto:${row.value}`}
-                    className="text-burgundy underline underline-offset-2"
-                  >
-                    {row.value}
-                  </a>
-                ) : (
-                  row.value
-                )}
-              </dd>
+              <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-6">
+                <dt className="shrink-0 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-soft sm:w-56">
+                  {row.label}
+                </dt>
+                <dd className="min-w-0 flex-1 break-words text-[15px] font-medium text-ink">
+                  {row.label === "Электронная почта" ? (
+                    <a
+                      href={`mailto:${row.value}`}
+                      className="text-burgundy underline underline-offset-2"
+                    >
+                      {row.value}
+                    </a>
+                  ) : (
+                    row.value
+                  )}
+                </dd>
+              </div>
               <button
                 type="button"
                 onClick={() => copy(row.label, row.value)}
                 aria-label={`Скопировать: ${row.label}`}
-                title={copied === row.label ? "Скопировано" : "Скопировать"}
-                className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center self-start rounded-lg border border-line bg-white text-ink-soft transition-colors hover:border-burgundy/40 hover:text-burgundy sm:mt-0 sm:self-auto"
+                className="group/tooltip relative inline-flex h-8 w-8 shrink-0 items-center justify-center self-start rounded-lg border border-line bg-white text-ink-soft transition-colors hover:border-burgundy/40 hover:text-burgundy sm:self-auto"
               >
                 {copied === row.label ? (
                   <Check className="h-4 w-4 text-burgundy" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-[calc(100%+8px)] right-0 z-50 hidden w-max translate-y-1 rounded-xl bg-carbon px-3 py-2 text-[12px] font-semibold text-white opacity-0 shadow-xl transition-all duration-150 before:absolute before:right-3 before:top-full before:border-[5px] before:border-transparent before:border-t-carbon sm:block group-hover/tooltip:translate-y-0 group-hover/tooltip:opacity-100 group-focus-visible/tooltip:translate-y-0 group-focus-visible/tooltip:opacity-100"
+                >
+                  {copied === row.label ? "Скопировано" : "Скопировать"}
+                </span>
               </button>
             </div>
           ))}

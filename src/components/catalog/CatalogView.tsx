@@ -7,7 +7,6 @@ import { ButtonLink } from "@/components/ui/Button";
 import { ProductCard } from "@/components/catalog/ProductCard";
 import { Close, ChevronRight } from "@/components/icons";
 import {
-  PRODUCTS,
   PRODUCT_TYPES,
   PRODUCT_TYPE_LABELS,
   EXPLOITATIONS,
@@ -131,13 +130,18 @@ function FilterGroup<T extends string>({
   );
 }
 
-export function CatalogView() {
+/**
+ * Каталог. Товары приходят пропом со страницы (сервер читает их из базы
+ * админки с фолбэком на статические данные) — компонент клиентский и сам
+ * ходить за данными не должен.
+ */
+export function CatalogView({ products }: { products: Product[] }) {
   const [filters, setFilters] = useState<Filters>(EMPTY);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const filtered = useMemo(
-    () => PRODUCTS.filter((p) => matches(p, filters)),
-    [filters],
+    () => products.filter((p) => matches(p, filters)),
+    [products, filters],
   );
 
   const activeCount =
@@ -247,6 +251,12 @@ export function CatalogView() {
 
             {/* Сетка / empty-state */}
             <div>
+              {/* Раздел списка решений. По дизайну заголовок над карточками не
+                  нужен (там счётчик), но без него карточки-h3 шли сразу после
+                  h1 — уровень перескакивал. Заголовок визуально скрыт и
+                  остаётся доступным скринридеру. */}
+              <h2 className="sr-only">Решения в каталоге</h2>
+
               <div className="mb-5 flex items-center justify-between">
                 <p className="text-[14px] text-ink-soft">
                   Найдено решений: <span className="font-semibold text-ink">{filtered.length}</span>

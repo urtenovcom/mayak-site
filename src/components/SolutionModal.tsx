@@ -10,8 +10,10 @@ import { useState, type ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { HoneypotField } from "@/components/forms/HoneypotField";
 import { Phone, Telegram, Max, Check, Close } from "@/components/icons";
 import { cn } from "@/lib/cn";
+import { LEAD_ERROR_TEXT, sendLead, type LeadError } from "@/lib/lead-client";
 
 const CHANNELS = [
   { value: "Звонок", label: "Звонок", Icon: Phone },
@@ -36,8 +38,10 @@ export function SolutionModal({ trigger }: { trigger: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [channel, setChannel] = useState<string>("Звонок");
   const [phone, setPhone] = useState("");
+  const [company, setCompany] = useState("");
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<LeadError | null>(null);
   const [done, setDone] = useState(false);
 
   const phoneValid = PHONE_RE.test(phone);
@@ -46,7 +50,9 @@ export function SolutionModal({ trigger }: { trigger: ReactNode }) {
   function reset() {
     setChannel("Звонок");
     setPhone("");
+    setCompany("");
     setTouched(false);
+    setError(null);
     setDone(false);
   }
 
@@ -56,19 +62,19 @@ export function SolutionModal({ trigger }: { trigger: ReactNode }) {
       return;
     }
     setSubmitting(true);
-    await fetch("/api/lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: "Заявка на подбор",
-        phone,
-        comment: `Способ связи: ${channel}`,
-        source: "Заявка «Подобрать решение» (модалка)",
-        page: typeof window !== "undefined" ? window.location.pathname : "",
-        utm: typeof window !== "undefined" ? window.location.search : "",
-      }),
-    }).catch(() => null);
+    setError(null);
+    const failure = await sendLead({
+      name: "Заявка на подбор",
+      phone,
+      comment: `Способ связи: ${channel}`,
+      source: "Заявка «Подобрать решение» (модалка)",
+      company,
+    });
     setSubmitting(false);
+    if (failure) {
+      setError(failure);
+      return;
+    }
     setDone(true);
   }
 
@@ -172,6 +178,11 @@ export function SolutionModal({ trigger }: { trigger: ReactNode }) {
                   </p>
                 )}
 
+                <HoneypotField
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                />
+
                 <Button
                   type="button"
                   size="lg"
@@ -181,6 +192,12 @@ export function SolutionModal({ trigger }: { trigger: ReactNode }) {
                 >
                   {submitting ? "Отправляем…" : "Подобрать решение"}
                 </Button>
+
+                {error && (
+                  <p className="mt-3 text-[13px] leading-snug text-burgundy">
+                    {LEAD_ERROR_TEXT[error]}
+                  </p>
+                )}
 
                 <p className="mt-4 text-[12px] leading-snug text-ink-soft/70">
                   Нажимая кнопку, вы соглашаетесь с{" "}

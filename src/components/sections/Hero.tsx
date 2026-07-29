@@ -122,7 +122,7 @@ export function Hero() {
 
       {/* Затемнения */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-0 bg-black/40 sm:bg-black/25" />
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
       </div>

@@ -10,14 +10,40 @@
    ============================================================ */
 
 import { useEffect, useRef, useState } from "react";
+import { PRODUCTION } from "@/lib/site";
 import { typo } from "@/lib/typo";
 
-// Точка производства (деревня Рыбаки, Раменский г.о., МО)
-const POINT: [number, number] = [55.6, 38.1];
-const RADIUS_KM = 300;
+// Точка производства (деревня Рыбаки, Раменский г.о., МО) и радиус зоны берутся
+// из общего источника: те же значения уходят в разметку schema.org, и разъехаться
+// карта с ней не должна.
+const POINT: [number, number] = PRODUCTION.point;
+const RADIUS_KM = PRODUCTION.serviceRadiusMeters / 1000;
 const KEY =
   process.env.NEXT_PUBLIC_YANDEX_MAPS_KEY ||
   "498c8430-33dc-4a80-9e73-0e3aba218664";
+
+function MapInfo() {
+  return (
+    <div className="max-w-md rounded-2xl bg-carbon/80 p-5 backdrop-blur-md sm:p-6">
+      <span className="text-[12px] font-bold uppercase tracking-[0.16em] text-[#d29aa8]">
+        География работы
+      </span>
+      <h2 className="mt-2 text-[22px] font-extrabold tracking-[-0.02em] text-white sm:text-[28px]">
+        Собственное производство
+      </h2>
+      <p className="mt-2 text-pretty text-[14px] leading-relaxed text-white/60">
+        {typo(
+          "Производственная площадка находится в Раменском городском округе, деревня Рыбаки.",
+        )}
+      </p>
+      <p className="mt-2 text-pretty text-[14px] leading-relaxed text-white/60">
+        {typo(
+          "Основная зона доставки и монтажа — до 300 км от производства. Более дальние направления обсуждаются индивидуально.",
+        )}
+      </p>
+    </div>
+  );
+}
 
 function loadYmaps(): Promise<any> {
   return new Promise((resolve, reject) => {
@@ -123,9 +149,14 @@ export function ProductionMap() {
   }, []);
 
   return (
-    <section className="relative isolate w-full overflow-hidden bg-carbon">
+    <section className="isolate w-full overflow-hidden bg-carbon">
+      <div className="px-5 py-6 sm:px-8 md:hidden">
+        <MapInfo />
+      </div>
+
+      <div className="relative overflow-hidden">
       {/* Тайлы Яндекса — инвертируем в тёмную тему */}
-      <div ref={boxRef} className="mayak-map-dark h-[440px] w-full sm:h-[560px]" />
+      <div ref={boxRef} className="mayak-map-dark h-[360px] w-full sm:h-[440px] md:h-[560px]" />
 
       {/* Радар поверх карты */}
       {sweep > 0 && (
@@ -172,25 +203,11 @@ export function ProductionMap() {
       {/* виньетка + инфо-плашка */}
       <div className="pointer-events-none absolute inset-0 z-[450] bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(10,8,9,0.55)_100%)]" />
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] p-6 sm:p-10">
-        <div className="pointer-events-auto inline-block max-w-md rounded-2xl bg-carbon/70 p-5 backdrop-blur-md sm:p-6">
-          <span className="text-[12px] font-bold uppercase tracking-[0.16em] text-[#d29aa8]">
-            География работы
-          </span>
-          <h2 className="mt-2 text-[22px] font-extrabold tracking-[-0.02em] text-white sm:text-[28px]">
-            Собственное производство
-          </h2>
-          <p className="mt-2 text-pretty text-[14px] leading-relaxed text-white/60">
-            {typo(
-              "Производственная площадка находится в Раменском городском округе, деревня Рыбаки.",
-            )}
-          </p>
-          <p className="mt-2 text-pretty text-[14px] leading-relaxed text-white/60">
-            {typo(
-              "Основная зона доставки и монтажа — до 300 км от производства. Более дальние направления обсуждаются индивидуально.",
-            )}
-          </p>
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] hidden p-10 md:block">
+        <div className="pointer-events-auto inline-block">
+          <MapInfo />
         </div>
+      </div>
       </div>
     </section>
   );

@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Сайт ООО «Маяк»
 
-## Getting Started
+Корпоративный сайт производителя модульных и металлических конструкций
+(бытовки, блок-контейнеры, модульные здания, санитарные модули, ангары) с
+каталогом, блогом, конструктором бытовки, формами заявок и собственной
+админ-панелью.
 
-First, run the development server:
+Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4. Админка — тот же
+Next плюс отдельный REST API на Express + Prisma + PostgreSQL.
+
+## Запуск
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+npm run dev:all
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Поднимает базу в Docker, API админки и сайт одной командой:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- сайт — http://localhost:3199
+- админка — http://localhost:3199/admin
+- API — http://localhost:5000
 
-## Learn More
+Только сайт, без админки:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev -- --webpack -p 3199
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Флаг `--webpack` обязателен: Turbopack падает из-за кириллицы в пути к проекту.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Проверки перед коммитом
 
-## Deploy on Vercel
+```bash
+npx tsc --noEmit
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run build
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npx eslint src
+```
+
+## Документация
+
+| Файл | О чём |
+|---|---|
+| [PROJECT.md](PROJECT.md) | Полное техническое описание: структура, дизайн-система, ключевые фичи, подводные камни, открытые задачи |
+| [docs/ADMIN.md](docs/ADMIN.md) | Админка: запуск, доступы, разделы, как правки попадают на сайт |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | Выкладка на прод: сайт, API админки, требования к nginx |
+| [react-project-admin-back/README.md](react-project-admin-back/README.md) | REST API админки: эндпоинты, права, модели |
+
+## Важное в двух словах
+
+- Контент публичных страниц берётся из базы админки, но при недоступном API
+  сайт рисуется на статических данных из `src/lib/{site,catalog,blog}.ts` —
+  и продолжает работать.
+- Заявки с форм уходят в базу, в журнал и в лог (это дожидается ответа),
+  а в Telegram и на почту — уже после ответа пользователю, через `after()`;
+  каналы независимы. Получателей в Telegram может быть несколько, список
+  правится в админке. Подробно — раздел 9 в `PROJECT.md`.
+- Весь отображаемый русский текст оборачивается в `typo()` из `src/lib/typo.ts`.

@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/manrope-cyrillic.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/manrope-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* ============================================================
    ООО «Маяк» — дизайн-система (PRD v3.0)
    Светлый минимализм, бордовые акценты, инженерные линии.
@@ -47,7 +65,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
 
   --radius-brand: var(--radius);
   --radius-brand-sm: var(--radius-sm);
@@ -59,7 +77,12 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+  /* Закрытая панель мобильного меню стоит за правым краем экрана
+     (`translate-x-full`) и раздувала прокрутку документа вдвое — на планшете и
+     ноутбуке появлялась горизонтальная полоса на каждой странице.
+     `clip`, а не `hidden`: не создаёт контекст прокрутки и не ломает sticky. */
+  overflow-x: clip;
 }
 
 body {
@@ -68,6 +91,9 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Парная к правилу выше: без неё Chrome всё равно даёт прокрутку вбок
+     из-за закрытой панели меню за правым краем. */
+  overflow-x: clip;
 }
 
 /* Мягкий тёплый фон для hero/визуалов (без сетки — чистый премиум-минимализм) */

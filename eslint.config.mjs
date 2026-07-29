@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Сборочный мусор от откаченной интеграции CMS и отдельный проект админки.
+    ".next-stale-*/**",
+    "react-project-admin-back/**",
   ]),
 ]);
 

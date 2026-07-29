@@ -43,13 +43,13 @@ export function CertificationBlock() {
           {typo("Сертификат соответствия на продукцию")}
         </h2>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr] lg:items-center">
+        <div className="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-5 rounded-[32px] border border-line bg-warm-soft/50 p-4 sm:p-6 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.2fr)] lg:items-stretch">
           {/* Левая колонка — превью и карточка PDF */}
           <a
             href={c.pdf}
             target="_blank"
             rel="noopener"
-            className="group block rounded-[28px] border border-line bg-warm-soft p-5 transition-all duration-200 hover:-translate-y-1 hover:border-burgundy/30 hover:shadow-[0_24px_60px_-34px_rgba(26,18,22,0.55)] sm:p-6"
+            className="group flex min-w-0 flex-col rounded-[24px] border border-line bg-white p-5 transition-all duration-200 hover:-translate-y-1 hover:border-burgundy/30 hover:shadow-[0_24px_60px_-34px_rgba(26,18,22,0.55)] sm:p-6"
           >
             <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[16px] border border-line bg-white">
               <Image
@@ -71,36 +71,57 @@ export function CertificationBlock() {
               </div>
             </div>
 
-            <span className="mt-4 inline-flex items-center gap-1.5 text-[14px] font-semibold text-burgundy">
+            <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[14px] font-semibold text-burgundy">
               Открыть PDF
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </span>
           </a>
 
           {/* Правая колонка — вводный текст и чек-лист данных сертификата */}
-          <div>
-            <p className="text-pretty text-[16px] leading-relaxed text-ink-soft">
+          <div className="flex min-w-0 flex-col rounded-[24px] border border-line bg-white p-6 shadow-[0_18px_50px_-38px_rgba(26,18,22,0.5)] sm:p-8">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-burgundy/10 text-burgundy">
+                <Check className="h-5 w-5" strokeWidth={2.5} />
+              </span>
+              <div>
+                <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-burgundy/70">
+                  Проверено
+                </p>
+                <h3 className="mt-1 text-[21px] font-extrabold tracking-[-0.02em] text-ink sm:text-[24px]">
+                  {typo("Подтверждённое соответствие")}
+                </h3>
+              </div>
+            </div>
+            <p className="mt-5 text-pretty text-[16px] leading-relaxed text-ink-soft">
               {typo(
                 "Мобильные здания блок-контейнерного типа ООО «Маяк» прошли добровольную сертификацию и соответствуют требованиям технических условий. Документ можно открыть и скачать.",
               )}
             </p>
-            <ul className="mt-6 flex flex-col">
-              {DETAILS.map((detail, i) => (
+            <ul className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2">
+              {DETAILS.map((detail) => (
               <li
                 key={detail}
-                className={`flex items-start gap-4 py-5 ${
-                  i > 0 ? "border-t border-line" : ""
-                }`}
+                className="flex min-w-0 items-start gap-3 rounded-[18px] border border-line bg-warm-soft/40 p-4"
               >
-                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-burgundy/30 text-burgundy">
-                  <Check className="h-4 w-4" strokeWidth={2.5} />
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-burgundy shadow-sm">
+                  <Check className="h-4 w-4" strokeWidth={2.4} />
                 </span>
-                <span className="text-pretty text-[15px] leading-relaxed text-ink">
+                <span className="min-w-0 break-words text-pretty text-[14px] leading-relaxed text-ink">
                   {typo(detail)}
                 </span>
                 </li>
               ))}
             </ul>
+
+            <a
+              href={c.pdf}
+              target="_blank"
+              rel="noopener"
+              className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-burgundy px-5 py-3 text-[14px] font-bold text-white transition-colors hover:bg-burgundy/90"
+            >
+              Открыть полный документ
+              <ArrowRight className="h-4 w-4" />
+            </a>
           </div>
         </div>
       </Container>
